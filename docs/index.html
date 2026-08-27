@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="架空の乗客データを使い、Rのロジスティック回帰で生存確率を予測する授業用ページ">
-  <title>第3回｜Rで生存確率を予測する</title>
+  <meta name="description" content="タイタニックを題材にした授業用データコンペで、Rによる予測と提出までの流れを学ぶページ">
+  <title>第3回｜タイタニックを題材にRでデータコンペ</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230d3159'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='white'%3ER%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260827-guided2">
+  <link rel="stylesheet" href="styles.css?v=20260828-context1">
 </head>
 <body>
   <a class="skip-link" href="#main">本文へ移動</a>
@@ -14,8 +14,8 @@
   <header class="hero hero--lecture03">
     <div class="hero__inner">
       <p class="eyebrow">応用データサイエンス演習 · DSC3010J · 2026年度 夏学期</p>
-      <h1>Rで生存確率を予測する</h1>
-      <p class="hero__lead">乗客の客室等級と性別から、生存する確率を計算する予測規則を作ります。630人の記録で規則を作り、その規則を別の270人へ使い、予測がどれだけ当たったかを確かめます。</p>
+      <h1>タイタニックを題材に、Rで予測を提出する</h1>
+      <p class="hero__lead">1912年のタイタニック号を題材にしたKaggleの入門課題を、授業用の架空データで小さく再現します。乗客情報から生存か非生存かを予測し、授業用ページへ提出してスコアを確かめます。</p>
       <div class="hero__meta"><span>第3回</span><span>90分</span><span>ブラウザでRを実行</span><span>コードは3区画</span><span>提出は2回まで</span></div>
     </div>
   </header>
@@ -32,18 +32,43 @@
   </div>
 
   <main id="main">
+    <section class="beginner-start content-width" aria-labelledby="story-title">
+      <p class="section-label">TODAY'S STORY</p>
+      <h2 id="story-title">タイタニック号の乗客データが、なぜ予測課題になるのか</h2>
+      <p class="beginner-start__lead">最初に、今日扱う出来事と、Kaggleで行われている予測課題とのつながりを確認します。</p>
+      <div class="start-grid">
+        <article><span>1</span><h3>歴史上のタイタニック号</h3><p>タイタニック号は、1912年の初航海中に氷山と衝突し、北大西洋で沈没した大型旅客船です。乗客と乗員の中には、生存した人と亡くなった人がいました。</p></article>
+        <article><span>2</span><h3>KaggleのTitanic課題</h3><p><strong>Kaggle</strong>は、データと予測問題が公開され、参加者が予測を提出してスコアやランキングを確認できるWebサービスです。入門課題の一つでは、乗客情報から生存・非生存を予測します。</p></article>
+        <article><span>3</span><h3>この授業での再現</h3><p>KaggleのWebサイトへは提出せず、この授業用ページを使います。Rで予測を作り、ニックネームで提出し、同じ授業の参加者と結果を比べます。</p></article>
+      </div>
+      <p class="context-source">実際の課題：<a href="https://www.kaggle.com/competitions/titanic" target="_blank" rel="noreferrer">Kaggle「Titanic - Machine Learning from Disaster」</a></p>
+    </section>
+
     <section class="synthetic-notice content-width" aria-labelledby="synthetic-title">
       <div>
         <p class="section-label">DATA NOTE</p>
         <h2 id="synthetic-title">このページで使うのは授業用の架空データです</h2>
-        <p>Titanic/Kaggleの列形式と予測課題から着想を得ていますが、乗客、船内配置、救助の仕組み、生存結果はすべて授業用に生成したものです。実際のタイタニック号に関する歴史的事実を表しません。</p>
+        <p>KaggleのTitanic課題の列形式と予測問題から着想を得ていますが、乗客、船内配置、救助の仕組み、生存結果はすべて授業用に生成したものです。実際のタイタニック号に関する歴史的事実を表しません。</p>
       </div>
+    </section>
+
+    <section class="competition-primer content-width" aria-labelledby="competition-title">
+      <p class="section-label">WHAT IS A DATA COMPETITION?</p>
+      <h2 id="competition-title">データコンペティションは、同じ予測問題に答えを提出し、同じ物差しで比べる活動</h2>
+      <p class="competition-primer__lead">主催者が「何を予測するか」「どのデータを使うか」「どう採点するか」を決めます。参加者はデータから予測方法を考え、正解を見ずに答案を提出します。採点結果はスコアやランキングとして返ります。順位だけでなく、問いから評価までを一周できることが、データ分析の練習になります。</p>
+      <div class="competition-analogy competition-analogy--plain" aria-label="データコンペティションの四つの段階">
+        <article><span>1　主催者から受け取る</span><strong>問題とデータ</strong><p>答えが分かる例を見て、何を予測するかを確認する</p></article><i aria-hidden="true">→</i>
+        <article><span>2　参加者が行う</span><strong>分析と予測</strong><p>データの特徴を調べ、未知の答えを予測する規則を作る</p></article><i aria-hidden="true">→</i>
+        <article><span>3　Webサイトへ送る</span><strong>予測を提出</strong><p>正解を見ることなく、一人ずつの予測答案を送る</p></article><i aria-hidden="true">→</i>
+        <article><span>4　同じ基準で返る</span><strong>スコアと順位</strong><p>隠してある正解と照合され、結果を改善する手がかりが返る</p></article>
+      </div>
+      <div class="accuracy-explained"><strong>この授業用ページが、Kaggleの役割を小さく再現します</strong><p>KaggleやGitHubのアカウントは使いません。ブラウザでRを実行し、作った予測をこのページから提出すると、Accuracyと公開ニックネームのランキングが表示されます。</p></div>
     </section>
 
     <section class="question-intro content-width" aria-labelledby="question-title">
       <p class="section-label">THE QUESTION</p>
-      <h2 id="question-title">新しい乗客について、生存を1、非生存を0と予測する</h2>
-      <p class="section-lead">最初に見る630人については、生存結果が分かっています。Rはこの630人の情報と結果の対応から、共通する予測規則を作ります。次の270人には、その規則を変えずに使います。</p>
+      <h2 id="question-title">今回の予測問題：別の270人について、生存を1、非生存を0と答える</h2>
+      <p class="section-lead">授業用の乗客記録は900人分あります。最初の630人は生存結果まで分かり、残り270人は結果が伏せられています。Rは最初の630人から共通する予測規則を作り、その規則を別の270人へ使います。生存・非生存という二つの答えをデータで扱うため、生存を<code>1</code>、非生存を<code>0</code>と表します。</p>
       <div class="question-route" aria-label="今日行う予測の流れ">
         <article><span>すでに結果が分かる</span><strong>630人</strong><p>規則を作るために使う</p></article><i aria-hidden="true">→</i>
         <article><span>作られるもの</span><strong>確率の規則</strong><p>等級と性別から確率を出す</p></article><i aria-hidden="true">→</i>
@@ -96,15 +121,15 @@
       <details class="secondary-columns"><summary>CSVにほかの列があるのはなぜですか</summary><p>年齢や運賃など、後の授業で使う列も入っています。この回の回帰では<code>Pclass</code>と<code>Sex</code>だけを使います。使わない列を無理に処理する必要はありません。</p></details>
     </section>
 
-    <section class="competition-primer content-width" aria-labelledby="competition-title">
-      <p class="section-label">WHY SUBMIT?</p>
-      <h2 id="competition-title">別の270人で確かめるから、規則の実力が分かる</h2>
-      <p class="competition-primer__lead">手元の630人だけに合う規則では、新しい人をうまく予測できるとは限りません。そこで、正解を見せない別の表に予測を出し、最後に採点します。この形式の予測課題を<strong>データコンペ</strong>と呼びます。Kaggleはデータコンペを公開しているウェブサービスの一つです。</p>
+    <section class="competition-primer competition-primer--concrete content-width" aria-labelledby="competition-concrete-title">
+      <p class="section-label">FROM DATA TO SCORE</p>
+      <h2 id="competition-concrete-title">この900人では、trainから予測を作り、challengeで確かめる</h2>
+      <p class="competition-primer__lead">手元の630人だけに合う規則では、新しい人をうまく予測できるとは限りません。そこで、正解を見せない別の270人へ予測を出し、最後に採点します。</p>
       <div class="competition-analogy competition-analogy--plain" aria-label="trainから採点まで">
-        <article><span>1</span><strong>train</strong><p>正解がある630人で規則を作る</p></article><i aria-hidden="true">→</i>
-        <article><span>2</span><strong>challenge</strong><p>正解を見ずに270人を予測する</p></article><i aria-hidden="true">→</i>
-        <article><span>3</span><strong>提出</strong><p>270人分の0/1を採点サーバーへ送る</p></article><i aria-hidden="true">→</i>
-        <article><span>4</span><strong>Accuracy</strong><p>隠し正解と一致した人数の割合が返る</p></article>
+        <article><span>1　答えが分かる例</span><strong>train</strong><p>正解がある630人で規則を作る</p></article><i aria-hidden="true">→</i>
+        <article><span>2　答えを伏せた問題</span><strong>challenge</strong><p>正解を見ずに270人を予測する</p></article><i aria-hidden="true">→</i>
+        <article><span>3　予測答案</span><strong>提出</strong><p>270人分の0/1を採点サーバーへ送る</p></article><i aria-hidden="true">→</i>
+        <article><span>4　採点結果</span><strong>Accuracy</strong><p>隠し正解と一致した人数の割合が返る</p></article>
       </div>
       <div class="accuracy-explained"><strong>Accuracyは「270人のうち、何人を正しく分類したか」</strong><p>たとえば隠し正解と180人分が一致した場合、<code>180 ÷ 270 = 0.667</code>です。これは「66.7%の乗客について0/1が一致した」という意味です。一人の生存確率とは別の数字です。</p></div>
     </section>
@@ -145,11 +170,13 @@
       <p class="section-label">90-MINUTE MAP</p>
       <h2 id="pipeline-title">表を見るところから、提出結果を読むところまで</h2>
       <ol class="class-route">
-        <li><time>0–20分</time><strong>二つの表と画面の仕組み</strong><span>train、challenge、Rメモリ、提出先を確認</span></li>
-        <li><time>20–45分</time><strong>回帰とロジスティック回帰</strong><span>直線、S字、確率を図で理解</span></li>
-        <li><time>45–60分</time><strong>STEP 1</strong><span>trainから予測規則を作る</span></li>
-        <li><time>60–70分</time><strong>STEP 2</strong><span>challengeの確率を出す</span></li>
-        <li><time>70–79分</time><strong>STEP 3</strong><span>確率を0/1へ変え、答案を自動作成</span></li>
+        <li><time>0–12分</time><strong>タイタニックとデータコンペ</strong><span>題材、Kaggle、提出と採点の仕組みを知る</span></li>
+        <li><time>12–25分</time><strong>二つの表と予測問題</strong><span>trainとchallengeの実際の行を見る</span></li>
+        <li><time>25–35分</time><strong>画面とRの作業スペース</strong><span>三つのコード欄、object、保存先を確認</span></li>
+        <li><time>35–57分</time><strong>回帰とロジスティック回帰</strong><span>直線、S字、確率、規則の学び方を図で理解</span></li>
+        <li><time>57–65分</time><strong>STEP 1</strong><span>trainから予測規則を作る</span></li>
+        <li><time>65–72分</time><strong>STEP 2</strong><span>challengeの確率を出す</span></li>
+        <li><time>72–79分</time><strong>STEP 3</strong><span>確率を0/1へ変え、答案を自動作成</span></li>
         <li><time>79–88分</time><strong>2回の提出</strong><span>最初の結果と、境界を変えた結果を比較</span></li>
         <li><time>88–90分</time><strong>振り返り</strong><span>表にない情報について考える</span></li>
       </ol>

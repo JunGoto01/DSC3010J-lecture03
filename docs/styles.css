@@ -1268,6 +1268,21 @@ footer {
 .synthetic-notice h2 { margin: 0 0 8px; color: var(--navy); font-size: 1.28rem; }
 .synthetic-notice p:last-child { margin: 0; color: var(--ink-soft); font-size: 0.93rem; }
 
+.beginner-start + .synthetic-notice { margin-top: 0; }
+
+.context-source {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.context-source a {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.start-grid p strong { color: var(--navy); }
+
 /* ------------------------- Lesson introduction ------------------------- */
 
 .beginner-start,
