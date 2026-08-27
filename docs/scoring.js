@@ -3,7 +3,6 @@ const competitionApi = window.DSC3010JCompetitionAPI;
 const scoreForm = document.getElementById("score-form");
 const teamInput = document.getElementById("team-name");
 const classCodeInput = document.getElementById("class-code");
-const fileInput = document.getElementById("submission-file");
 const generatedSubmissionStatus = document.getElementById("generated-submission-status");
 const scoreButton = document.getElementById("score-button");
 const scoreResult = document.getElementById("score-result");
@@ -21,7 +20,6 @@ let leaderboardLoading = false;
 scoreForm?.addEventListener("submit", scoreSubmission);
 copyReceiptButton?.addEventListener("click", copyReceipt);
 refreshBoardButton?.addEventListener("click", refreshLeaderboard);
-fileInput?.addEventListener("change", updateSubmissionSourceStatus);
 document.addEventListener("dsc3010j:submission-ready", updateSubmissionSourceStatus);
 updateSubmissionSourceStatus();
 refreshLeaderboard();
@@ -33,7 +31,6 @@ async function scoreSubmission(event) {
 
   const alias = teamInput.value.normalize("NFKC").trim();
   const classCode = classCodeInput.value.trim();
-  const file = fileInput.files?.[0];
   const generatedCsv = window.DSC3010J_GENERATED_SUBMISSION_CSV || "";
   if (alias.length < 1 || [...alias].length > 30) {
     showScoreError("公開ニックネームを1〜30文字で入力してください。実名・学籍番号・メールは使いません。");
@@ -43,16 +40,15 @@ async function scoreSubmission(event) {
     showScoreError("教員が投影している授業コードを入力してください。");
     return;
   }
-  if (!file && !generatedCsv) {
-    showScoreError("先に問09を実行するか、作成済みの titanic_submission.csv を選んでください。");
+  if (!generatedCsv) {
+    showScoreError("先にSTEP 1、STEP 2、STEP 3を順番に実行してください。STEP 3が終わると、提出用の答案が自動で作られます。");
     return;
   }
 
   scoreButton.disabled = true;
   scoreButton.textContent = "採点サーバーへ提出しています…";
   try {
-    const rawText = file ? await file.text() : generatedCsv;
-    const predictions = parseSubmission(rawText);
+    const predictions = parseSubmission(generatedCsv);
     const fingerprint = await makeFingerprint(alias, predictions);
     const pending = readPending();
     const requestId = pending?.fingerprint === fingerprint
@@ -75,55 +71,55 @@ async function scoreSubmission(event) {
   } catch (error) {
     showScoreError(error instanceof Error ? error.message : String(error));
   } finally {
-    scoreButton.disabled = false;
-    scoreButton.textContent = "このCSVを公式提出する";
+    updateSubmissionSourceStatus();
   }
 }
 
 function updateSubmissionSourceStatus() {
   if (!generatedSubmissionStatus) return;
-  if (fileInput.files?.[0]) {
-    generatedSubmissionStatus.textContent = `選択中：${fileInput.files[0].name}`;
+  if (window.DSC3010J_GENERATED_SUBMISSION_CSV) {
+    generatedSubmissionStatus.textContent = "270人分の予測答案ができています。このまま採点できます。";
     generatedSubmissionStatus.dataset.ready = "true";
-  } else if (window.DSC3010J_GENERATED_SUBMISSION_CSV) {
-    generatedSubmissionStatus.textContent = "問09で作った最新のCSVを、そのまま提出できます。";
-    generatedSubmissionStatus.dataset.ready = "true";
+    scoreButton.disabled = false;
+    scoreButton.textContent = "予測答案を提出して採点する";
   } else {
-    generatedSubmissionStatus.textContent = "問09を実行すると、ここから直接提出できます。ファイル選択は任意です。";
+    generatedSubmissionStatus.textContent = "STEP 3を実行すると、270人分の提出用答案がここに用意されます。";
     generatedSubmissionStatus.dataset.ready = "false";
+    scoreButton.disabled = true;
+    scoreButton.textContent = "STEP 3の実行後に提出できます";
   }
 }
 
 function parseSubmission(rawText) {
   const text = rawText.replace(/^\uFEFF/, "").trim();
-  if (!text) throw new Error("CSVが空です。問09をもう一度実行して作り直してください。");
+  if (!text) throw new Error("提出用の答案が空です。STEP 3をもう一度実行してください。");
 
   const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
   const header = lines.shift()?.split(",").map((value) => value.trim().replace(/^"|"$/g, ""));
   if (!header || header.length !== 2 || header[0] !== "PassengerId" || header[1] !== "Survived") {
-    throw new Error("1行目は PassengerId,Survived の2列にしてください。大文字・小文字も区別します。");
+    throw new Error("提出用答案を正しく組み立てられませんでした。ページを再読み込みし、STEP 1から実行してください。");
   }
 
   const rows = lines.map((line, index) => {
     const fields = line.split(",").map((value) => value.trim().replace(/^"|"$/g, ""));
-    if (fields.length !== 2) throw new Error(`${index + 2}行目の列数が2ではありません。`);
+    if (fields.length !== 2) throw new Error(`提出用答案の${index + 2}行目を正しく読み取れませんでした。`);
     const passengerId = Number(fields[0]);
     const survived = Number(fields[1]);
-    if (!Number.isInteger(passengerId)) throw new Error(`${index + 2}行目のPassengerIdが整数ではありません。`);
+    if (!Number.isInteger(passengerId)) throw new Error(`提出用答案の${index + 2}行目に照合番号がありません。`);
     if (!Number.isInteger(survived) || ![0, 1].includes(survived)) {
-      throw new Error(`${index + 2}行目のSurvivedは0または1にしてください。NAや確率は提出できません。`);
+      throw new Error(`提出用答案の${index + 2}行目が0または1になっていません。STEP 3を確認してください。`);
     }
     return { passengerId, survived };
   });
 
   if (rows.length !== competition.expectedRows) {
-    throw new Error(`提出は${competition.expectedRows}行必要ですが、このCSVは${rows.length}行です。`);
+    throw new Error(`予測は${competition.expectedRows}人分必要ですが、現在は${rows.length}人分です。STEP 2から実行し直してください。`);
   }
   const ids = rows.map((row) => row.passengerId);
-  if (new Set(ids).size !== ids.length) throw new Error("PassengerIdが重複しています。");
+  if (new Set(ids).size !== ids.length) throw new Error("提出用答案の照合番号が重複しています。ページを再読み込みしてください。");
   const expected = new Set(competition.challengeIds);
   if (ids.some((id) => !expected.has(id)) || competition.challengeIds.some((id) => !ids.includes(id))) {
-    throw new Error("この授業のchallengeとPassengerIdが一致しません。最新のCSVを使ってください。");
+    throw new Error("提出用答案とchallengeの行が一致しません。ページを再読み込みし、STEP 1から実行してください。");
   }
   return rows;
 }

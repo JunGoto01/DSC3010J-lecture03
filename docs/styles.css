@@ -49,6 +49,11 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+section[id],
+h2[id] {
+  scroll-margin-top: 96px;
+}
+
 body {
   margin: 0;
   color: var(--ink);
@@ -1263,7 +1268,7 @@ footer {
 .synthetic-notice h2 { margin: 0 0 8px; color: var(--navy); font-size: 1.28rem; }
 .synthetic-notice p:last-child { margin: 0; color: var(--ink-soft); font-size: 0.93rem; }
 
-/* -------------------- 初学者向けイントロダクション -------------------- */
+/* ------------------------- Lesson introduction ------------------------- */
 
 .beginner-start,
 .competition-primer,
@@ -1940,13 +1945,15 @@ footer {
   vector-effect: non-scaling-stroke;
 }
 
-.chart-points {
+.chart-points,
+.data-point {
   fill: var(--blue);
   stroke: var(--navy-deep);
   stroke-width: 1.25;
 }
 
 .regression-line,
+.linear-line,
 .logistic-line {
   fill: none;
   stroke: var(--clay);
@@ -2089,7 +2096,7 @@ footer {
   border-top: 3px solid var(--blue-soft);
 }
 
-/* ---------------------- 初学者向けブロックの可変幅 ---------------------- */
+/* ---------------------- Responsive lesson blocks ----------------------- */
 
 @media (max-width: 980px) {
   .pipeline-flow__steps {
@@ -2554,4 +2561,1051 @@ footer > .content-width {
   .runtime-bar, .r-cell__actions, .skip-link, .chapter-nav { display: none; }
   body { background: #fff; font-size: 10.5pt; }
   .lesson { page-break-inside: avoid; }
+}
+
+/* ================================================================
+   Guided three-step lesson
+   The data, shared R workspace, learned rule, and submission path
+   are styled as one continuous story for first-time learners.
+   ================================================================ */
+
+.question-intro,
+.data-first,
+.workspace-explainer,
+.submission-builder {
+  padding: clamp(50px, 6.5vw, 78px) 0;
+}
+
+.data-first,
+.workspace-explainer,
+.pipeline-overview,
+.model-primer,
+.submission-builder {
+  border-top: 1px solid var(--line);
+}
+
+.question-intro > h2,
+.data-first > h2,
+.workspace-explainer > h2,
+.submission-builder > h2 {
+  max-width: 31ch;
+  margin: 0 0 14px;
+  color: var(--navy);
+  font-size: clamp(1.55rem, 3.6vw, 2.2rem);
+  line-height: 1.42;
+}
+
+.question-intro > p:not(.section-label),
+.data-first > p:not(.section-label),
+.workspace-explainer > p:not(.section-label),
+.submission-builder > p:not(.section-label),
+.section-lead {
+  max-width: 76ch;
+  color: var(--ink-soft);
+}
+
+/* The lesson question: known rows -> one rule -> new rows. */
+
+.question-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.question-route article {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  min-height: 150px;
+  padding: 22px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--blue-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.question-route article:nth-of-type(2) {
+  background: var(--blue-tint);
+  border-color: var(--blue-tint-2);
+  border-top-color: var(--blue);
+}
+
+.question-route article:last-of-type {
+  border-top-color: var(--moss);
+}
+
+.question-route span {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.question-route strong {
+  display: block;
+  margin: 5px 0;
+  color: var(--navy);
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  line-height: 1.35;
+}
+
+.question-route p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+
+.question-route > i {
+  align-self: center;
+  color: var(--blue-soft);
+  font-size: 1.45rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* Put the actual rows before the terminology. */
+
+.data-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 30px 0 20px;
+}
+
+.data-preview-card {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.data-preview-card--train { border-top: 4px solid var(--moss); }
+.data-preview-card--challenge { border-top: 4px solid var(--blue); }
+
+.data-preview-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.data-preview-card__head span {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.data-preview-card__head h3 {
+  margin: 2px 0 0;
+  color: var(--navy);
+  font-size: 1.15rem;
+}
+
+.data-preview-card__head > strong {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  color: var(--moss);
+  background: var(--moss-tint);
+  border: 1px solid #d8e3d9;
+  border-radius: 999px;
+  font-size: 0.76rem;
+}
+
+.data-preview-card--challenge .data-preview-card__head > strong {
+  color: var(--blue);
+  background: var(--blue-tint);
+  border-color: var(--blue-tint-2);
+}
+
+.data-preview-card .table-scroll { margin: 0; }
+
+.preview-table {
+  min-width: 410px;
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-table th,
+.preview-table td {
+  padding: 9px 13px;
+  text-align: center;
+}
+
+.preview-table th:first-child,
+.preview-table td:first-child {
+  width: 54px;
+  color: var(--ink-faint);
+  background: var(--surface-sunk);
+}
+
+.preview-table .answer-column {
+  color: #31553b;
+  background: var(--moss-tint);
+  font-weight: 800;
+}
+
+.preview-table .hidden-answer-column {
+  color: var(--blue);
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 7px, rgba(56, 97, 140, 0.055) 7px 14px),
+    var(--blue-tint);
+  font-weight: 800;
+}
+
+.data-preview-card > p {
+  margin: 0;
+  padding: 15px 20px 18px;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--line);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
+.minimal-dictionary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.minimal-dictionary article {
+  min-width: 0;
+  padding: 17px 18px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.minimal-dictionary article > code {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 750;
+}
+
+.minimal-dictionary article > strong {
+  display: block;
+  color: var(--navy);
+  font-size: 0.93rem;
+}
+
+.minimal-dictionary article > p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  line-height: 1.7;
+}
+
+.minimal-dictionary__system {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(105px, auto) minmax(150px, 0.42fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  background: var(--surface-sunk) !important;
+  border-style: dashed !important;
+}
+
+.minimal-dictionary__system > code,
+.minimal-dictionary__system > p { margin: 0 !important; }
+
+.secondary-columns {
+  margin-top: 14px;
+  padding: 14px 18px;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.secondary-columns summary {
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.secondary-columns p { margin-bottom: 0; }
+
+/* A literal four-stage competition path and a concrete score definition. */
+
+.competition-analogy--plain article {
+  border-top: 3px solid var(--blue-soft);
+}
+
+.competition-analogy--plain article > span {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  margin: 0 auto 7px;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 50%;
+  font-size: 0.76rem;
+}
+
+.competition-analogy--plain article:last-of-type { border-top-color: var(--moss); }
+
+.accuracy-explained {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.65fr) minmax(0, 1fr);
+  gap: 22px;
+  margin-top: 24px;
+  padding: 22px 24px;
+  background: var(--moss-tint);
+  border: 1px solid #d8e3d9;
+  border-left: 4px solid var(--moss);
+  border-radius: var(--radius);
+}
+
+.accuracy-explained > strong {
+  color: var(--moss);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.accuracy-explained > p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.91rem;
+  line-height: 1.8;
+}
+
+/* One browser tab, one R memory, three ordered script sections. */
+
+.workspace-flow {
+  margin: 30px 0 22px;
+  padding: 25px;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.workspace-flow ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workspace-flow li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  min-height: 148px;
+  padding: 17px 15px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--blue);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.workspace-flow li:not(:last-child)::after {
+  content: "\2192";
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 8px);
+  width: 18px;
+  color: var(--blue-soft);
+  font-size: 1.2rem;
+  font-weight: 750;
+  transform: translateY(-50%);
+}
+
+.workspace-flow__prepared {
+  border-top-color: var(--moss) !important;
+}
+
+.workspace-flow li > span {
+  color: var(--blue);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.workspace-flow__prepared > span { color: var(--moss) !important; }
+
+.workspace-flow li > strong {
+  display: block;
+  margin: 7px 0;
+  color: var(--navy);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.workspace-flow li > small {
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.workspace-flow figcaption {
+  max-width: 76ch;
+  margin: 18px auto 0;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.workspace-rules {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.workspace-rules article {
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--blue-soft);
+  border-radius: var(--radius-sm);
+}
+
+.workspace-rules h3 {
+  margin: 0 0 6px;
+  color: var(--navy);
+  font-size: 0.94rem;
+}
+
+.workspace-rules p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.script-save-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 24px;
+  margin-top: 24px;
+  padding: 20px 22px;
+  background: var(--blue-tint);
+  border: 1px solid var(--blue-tint-2);
+  border-radius: var(--radius);
+}
+
+.script-save-panel strong,
+.script-save-panel span { display: block; }
+
+.script-save-panel strong { color: var(--navy); font-size: 0.94rem; }
+
+.script-save-panel span {
+  margin-top: 3px;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.script-save-panel > small {
+  grid-column: 1 / -1;
+  min-height: 1.4em;
+  color: var(--moss);
+  font-size: 0.78rem;
+}
+
+/* The 90-minute map is a readable timetable, not a dense flow chart. */
+
+.class-route {
+  margin: 30px 0 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  list-style: none;
+}
+
+.class-route li {
+  display: grid;
+  grid-template-columns: 125px minmax(170px, 0.7fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.class-route li:last-child { border-bottom: 0; }
+.class-route li:nth-child(even) { background: var(--surface-sunk); }
+
+.class-route time {
+  color: var(--blue);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.class-route strong { color: var(--navy); font-size: 0.91rem; }
+.class-route span { color: var(--ink-soft); font-size: 0.84rem; line-height: 1.6; }
+
+/* How logistic regression learns and what the learned rule contains. */
+
+.learning-loop {
+  margin: 30px 0;
+  padding: 24px;
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.learning-loop h3 {
+  margin: 0 0 18px;
+  color: var(--navy);
+  font-size: 1.02rem;
+}
+
+.learning-loop ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-loop li {
+  min-width: 0;
+  padding: 16px 14px 17px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.learning-loop li > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 10px;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 50%;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.learning-loop li > strong {
+  display: block;
+  color: var(--navy);
+  font-size: 0.87rem;
+  line-height: 1.55;
+}
+
+.learning-loop li > p {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.learned-rule {
+  margin: 26px 0 18px;
+  padding: 22px 24px;
+  background: var(--blue-tint);
+  border: 1px solid var(--blue-tint-2);
+  border-left: 4px solid var(--blue);
+  border-radius: var(--radius);
+}
+
+.learned-rule h3 {
+  margin: 0 0 12px;
+  color: var(--navy);
+  font-size: 1rem;
+}
+
+.learned-rule__equation {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  color: var(--navy);
+  background: var(--surface);
+  border: 1px solid var(--blue-tint-2);
+  border-radius: var(--radius-sm);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(0.88rem, 2vw, 1.05rem);
+  font-weight: 750;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.learned-rule ul {
+  margin: 0;
+  padding-left: 1.3em;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  line-height: 1.75;
+}
+
+.learned-rule li + li { margin-top: 5px; }
+
+.model-group-table {
+  min-width: 670px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.model-group-table caption,
+.submission-preview-table caption {
+  padding: 12px 15px;
+  color: var(--navy);
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  font-size: 0.85rem;
+  font-weight: 750;
+  text-align: left;
+}
+
+.model-group-table th:nth-child(n + 3),
+.model-group-table td:nth-child(n + 3) { text-align: right; }
+
+.model-group-table td:last-child {
+  color: var(--navy);
+  background: var(--blue-tint);
+  font-weight: 750;
+}
+
+.table-note {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.probability-examples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.probability-examples article {
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--blue-soft);
+  border-radius: var(--radius-sm);
+}
+
+.probability-examples span {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.probability-examples strong {
+  display: block;
+  margin: 5px 0;
+  color: var(--navy);
+}
+
+.probability-examples p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.probability-examples b { color: var(--blue); font-size: 1.08rem; }
+
+.r-cell--decision {
+  border-color: rgba(74, 107, 82, 0.45);
+  box-shadow: 0 1px 2px rgba(30, 53, 80, 0.04), 0 12px 28px -18px rgba(74, 107, 82, 0.42);
+}
+
+.r-cell--decision .r-cell__head {
+  background: linear-gradient(115deg, var(--navy-deep), #294938);
+}
+
+/* Assemble the answer and make the server boundary explicit. */
+
+.submission-builder { background: linear-gradient(180deg, var(--paper), var(--moss-tint)); }
+
+.submission-join {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+  margin: 28px 0 22px;
+}
+
+.submission-join article {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  min-height: 112px;
+  padding: 17px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.submission-join article:last-of-type {
+  background: var(--blue-tint);
+  border-color: var(--blue-tint-2);
+}
+
+.submission-join span {
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.submission-join strong {
+  margin-top: 6px;
+  color: var(--navy);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+
+.submission-join > i {
+  align-self: center;
+  color: var(--blue-soft);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.submission-preview-table {
+  max-width: 560px;
+  margin-inline: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+
+.submission-preview-table th,
+.submission-preview-table td { text-align: center; }
+
+.submission-preview-table th:first-child,
+.submission-preview-table td:first-child { border-right: 1px solid var(--line); }
+
+.submission-preview-table th small {
+  color: var(--ink-faint);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+#submission-preview-placeholder td {
+  padding: 24px 16px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.rerun-instructions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 26px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rerun-instructions li {
+  min-width: 0;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.rerun-instructions li > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 50%;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.rerun-instructions li > p {
+  margin: 9px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.submission-server-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 13px;
+  margin: 28px 0 20px;
+}
+
+.submission-server-flow article {
+  min-width: 0;
+  padding: 19px 18px;
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.submission-server-flow span {
+  display: block;
+  color: #9bb5cb;
+  font-size: 0.74rem;
+  font-weight: 750;
+}
+
+.submission-server-flow strong {
+  display: block;
+  margin: 6px 0;
+  color: #fff;
+  font-size: 0.98rem;
+}
+
+.submission-server-flow p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.67);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.submission-server-flow > i {
+  align-self: center;
+  color: #9bb5cb;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.submission-source--generated {
+  min-height: 49px;
+  padding: 8px 11px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.19);
+  border-radius: var(--radius-sm);
+}
+
+.submission-source--generated > span {
+  display: block;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.submission-source--generated > small { margin-top: 4px; }
+
+/* ----------------------- Guided lesson: responsive ----------------------- */
+
+@media (max-width: 900px) {
+  .data-preview-grid,
+  .workspace-rules {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-flow ol {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .workspace-flow li {
+    min-height: 0;
+    grid-template-columns: minmax(100px, 0.35fr) minmax(130px, 0.45fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .workspace-flow li > strong { margin: 0; }
+
+  .workspace-flow li:not(:last-child)::after {
+    top: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) rotate(90deg);
+  }
+
+  .learning-loop ol,
+  .rerun-instructions {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-loop li,
+  .rerun-instructions li {
+    display: grid;
+    grid-template-columns: auto minmax(150px, 0.42fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+  }
+
+  .learning-loop li > span,
+  .rerun-instructions li > span,
+  .learning-loop li > p,
+  .rerun-instructions li > p { margin: 0; }
+}
+
+@media (max-width: 760px) {
+  .question-route,
+  .competition-analogy--plain,
+  .submission-join,
+  .submission-server-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .question-route article { min-height: 0; }
+
+  .question-route > i,
+  .competition-analogy--plain > i,
+  .submission-join > i,
+  .submission-server-flow > i {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+
+  .accuracy-explained,
+  .script-save-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .script-save-panel .button { justify-self: start; }
+
+  .class-route li {
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 6px 14px;
+  }
+
+  .class-route li > span { grid-column: 2; }
+
+  .minimal-dictionary { grid-template-columns: 1fr; }
+  .minimal-dictionary__system { grid-column: auto; grid-template-columns: 1fr; gap: 5px; }
+
+  .probability-examples { grid-template-columns: 1fr; }
+
+  .submission-server-flow article { text-align: left; }
+}
+
+@media (max-width: 520px) {
+  .question-intro,
+  .data-first,
+  .workspace-explainer,
+  .submission-builder { padding: 42px 0; }
+
+  .data-preview-card__head { align-items: flex-start; padding: 16px; }
+  .data-preview-card > p { padding-inline: 16px; }
+
+  .workspace-flow,
+  .learning-loop { padding: 18px 14px; }
+
+  .workspace-flow li {
+    display: block;
+    padding: 15px 16px;
+    text-align: left;
+  }
+
+  .workspace-flow li > strong { margin: 5px 0; }
+  .workspace-flow figcaption { text-align: left; }
+
+  .learning-loop li,
+  .rerun-instructions li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .learning-loop li > p,
+  .rerun-instructions li > p { grid-column: 2; }
+
+  .class-route li {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    padding: 14px 16px;
+  }
+
+  .class-route li > span { grid-column: auto; }
+
+  .learned-rule { padding: 18px 16px; }
+  .learned-rule__equation { text-align: left; overflow-wrap: anywhere; }
+
+  .submission-join strong { font-size: 0.84rem; }
+}
+
+/* -------------------------- Guided lesson: print ------------------------- */
+
+@media print {
+  .question-intro,
+  .data-first,
+  .workspace-explainer,
+  .submission-builder {
+    padding: 24pt 0;
+  }
+
+  .question-route,
+  .data-preview-grid,
+  .workspace-rules,
+  .probability-examples {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .question-route > i,
+  .competition-analogy--plain > i,
+  .submission-join > i,
+  .submission-server-flow > i,
+  .workspace-flow li::after { display: none; }
+
+  .question-route,
+  .submission-join,
+  .submission-server-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .competition-analogy--plain { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  .question-route article,
+  .data-preview-card,
+  .workspace-flow li,
+  .workspace-rules article,
+  .learning-loop,
+  .learned-rule,
+  .probability-examples article,
+  .submission-join article,
+  .rerun-instructions li,
+  .submission-server-flow article,
+  .script-save-panel,
+  .accuracy-explained {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .workspace-flow ol,
+  .learning-loop ol,
+  .rerun-instructions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+  .workspace-flow li,
+  .learning-loop li,
+  .rerun-instructions li {
+    display: block;
+    min-height: 0;
+  }
+
+  .score-section {
+    color: var(--ink);
+    background: #fff;
+    border-top: 2px solid var(--navy);
+  }
+
+  .score-section h2,
+  .submission-server-flow strong { color: var(--navy); }
+  .submission-server-flow article { background: var(--surface-sunk); border-color: var(--line); }
+  .submission-server-flow p { color: var(--ink-soft); }
+  .submission-server-flow span { color: var(--blue); }
 }
