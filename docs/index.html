@@ -15,8 +15,8 @@
     <div class="hero__inner">
       <p class="eyebrow">応用データサイエンス演習 · DSC3010J · 2026年度 夏学期</p>
       <h1>タイタニックを題材に、Rで予測を提出する</h1>
-      <p class="hero__lead">1912年のタイタニック号を題材にした、Kaggleという有名な入門課題があります。今日はそれを授業用の架空データで小さく再現し、Rで予測を作って提出するところまでを、このページ一枚でやってみます。上から順に読み進めてください。</p>
-      <div class="hero__meta"><span>第3回</span><span>90分</span><span>このページで説明から提出まで完結</span><span>ブラウザでRを実行</span><span>コードは3区画</span><span>提出は2回まで</span></div>
+      <p class="hero__lead">1912年のタイタニック号を題材にした、Kaggleという有名な入門課題があります。今日はそれを授業用の架空データで小さく再現し、Rで予測を作り、提出して採点を受けるところまでをやってみます。</p>
+      <div class="hero__meta"><span>第3回</span><span>90分</span><span>アカウント登録は不要</span><span>ブラウザでRを実行</span><span>コードは3区画</span><span>提出は2回まで</span></div>
     </div>
   </header>
 
@@ -35,8 +35,8 @@
     <nav class="lesson-navigator content-width" aria-labelledby="navigator-title">
       <div class="lesson-navigator__intro">
         <p class="section-label">START HERE</p>
-        <h2 id="navigator-title">今日はスライドを配りません。このページがそのまま教材です</h2>
-        <p>説明も、図も、Rの実行も、予測の提出も、すべてこの一枚の中にあります。八つの章を上から順に進めてください。授業中に迷子になったら、この一覧に戻ってくれば大丈夫です。</p>
+        <h2 id="navigator-title">説明を読み、図で確かめ、Rを動かし、予測を提出する</h2>
+        <p>全体は八つの章に分かれています。上から順に進めてください。途中で現在地が分からなくなったら、この一覧に戻ると全体の中の位置を確かめられます。</p>
       </div>
       <ol>
         <li><a href="#story-title"><span>01</span><strong>題材を知る</strong><small>タイタニックとKaggle</small></a></li>
@@ -243,7 +243,7 @@
         </tbody>
       </table></div>
       <div class="explanation"><strong>この割合そのものが、すでに素朴な予測です</strong><span>femaleの63%が生存しているなら、「challengeのfemaleは生存しやすいだろう」と見積もれます。等級も組み合わせれば、もっと細かく見積もれます。ただ、集団を細かく割るほど表は大きくなり、一つ一つの集団の人数は減って割合が当てにならなくなります。そこで登場するのが回帰です。<strong>回帰とは、この割合の表を、全員に共通して使える一つの式（規則）へまとめる方法</strong>です。式の中の数字——各手がかりが結果をどれだけ動かすかを表す重み——を<strong>係数</strong>と呼びます。</span></div>
-      <div class="takeaway"><strong>この先の式は、覚えなくてかまいません</strong><span>ここから式が二つ出てきますが、導出も暗記も不要で、試験にも出しません。読み取ってほしいのは「手がかり → 点数 → 確率」という流れと、二枚の図だけです。</span></div>
+      <div class="takeaway"><strong>この先の式は、覚えなくてかまいません</strong><span>ここから式が二つ出てきますが、導出や暗記は必要ありません。読み取ってほしいのは「手がかり → 点数 → 確率」という流れと、二枚の図だけです。</span></div>
       <div class="model-panels">
         <article class="model-panel">
           <h3>普通の回帰：数値を直線で予測する</h3>
@@ -480,7 +480,7 @@ prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
       </div>
     </section>
 
-    <section class="concept-section content-width" aria-labelledby="repo-title"><p class="section-label">COURSE MATERIALS</p><h2 id="repo-title">公開repoは教材一式の置き場所</h2><p>Web上のコードを編集しても、GitHub上のファイルは変わりません。この回ではrepoから教材を閲覧し、コードの編集内容は<code>.R</code>として自分のPCへ保存します。</p><div class="download-row"><a class="button button--quiet" href="https://github.com/JunGoto01/DSC3010J-lecture03">授業用の公開repoを見る</a><a class="button button--quiet" href="leaderboard.html">みんなの公開ランキング</a></div></section>
+    <section class="concept-section content-width" aria-labelledby="repo-title"><p class="section-label">COURSE MATERIALS</p><h2 id="repo-title">今日使ったコードとデータは、GitHubで公開されています</h2><p><strong>GitHub</strong>は、コードやデータを公開・共有するためのWebサービスです。この授業のコードとデータ一式は、下のリンク先（リポジトリと呼ばれる置き場所）からいつでも見られます。閲覧にアカウントは要りません。なお、このページ上でコードを編集しても、GitHub上のファイルは変わりません。手元に残したいコードは、<code>.R</code>ファイルとして自分のPCへ保存してください。</p><div class="download-row"><a class="button button--quiet" href="https://github.com/JunGoto01/DSC3010J-lecture03">授業のGitHubリポジトリを見る</a><a class="button button--quiet" href="leaderboard.html">みんなの公開ランキング</a></div></section>
 
     <section class="final-section" aria-labelledby="reflection-title"><div class="content-width"><p class="section-label">RECAP &amp; EXIT TICKET</p><h2 id="reflection-title">乗客表に入っていない、どのような情報が予測に必要だろうか</h2><div class="recap-flow" aria-label="今日つないだ分析の流れ"><article><span>1</span><strong>train</strong><p>正解からmodelを学ぶ</p></article><i aria-hidden="true">→</i><article><span>2</span><strong>challenge</strong><p>同じmodelで確率を出す</p></article><i aria-hidden="true">→</i><article><span>3</span><strong>境界</strong><p>確率を0/1へ変える</p></article><i aria-hidden="true">→</i><article><span>4</span><strong>Accuracy</strong><p>隠し正解との一致を測る</p></article></div><div class="accuracy-reality"><strong>高いAccuracyは、現実の仕組みを理解したことと同じではありません</strong><p>今回のmodelが見ているのは、表に入れた客室等級と性別だけです。同じ二列を持つ人でも結果が異なるなら、今回の表に記録していない違いはmodelから見えません。何が抜けている可能性があるかを考えてください。</p></div><div class="completion-check"><strong>最初の学習目標へ戻る</strong><ul><li>trainとchallengeを分ける理由を、自分の言葉で説明できる</li><li>確率、提出用0/1、Accuracyを別の数字として説明できる</li><li><code>model → probability → prediction</code>の順番を説明できる</li></ul></div><ol><li>trainからmodelを作り、challengeを予測する順番を説明する</li><li>0.5から0.6へ変えると、予測1の人数がどう変わったかを書く</li><li>Accuracyだけでは分からないことを一つ挙げる</li></ol><p class="final-message">回帰にできるのは、表に入っている情報から共通の規則を作ることまでです。表にない仕組みは、別の情報を集めて初めて分析できます。次回以降は、今日使わなかった列（AgeやFareなど）をformulaへ自分で選んで加えるところから始め、さらに「表の外の情報」をどう手に入れて分析へつなぐかを考えていきます。</p></div></section>
   </main>
