@@ -49,7 +49,7 @@ names(train)
 # Survivedは0/1なので、その平均は「1が占める割合」になります。
 survival_rate <- mean(train$Survived)
 
-# 保存した値を画面に表示します。約0.511、つまり約51.1%になるはずです。
+# 保存した値を画面に表示します。約0.505、つまり約50.5%になるはずです。
 survival_rate
 
 # trainでは1がわずかに多いため、全員を1と答えるだけでも約51.1%です。
@@ -64,7 +64,7 @@ age_is_missing <- is.na(train$Age)
 # sum()はTRUEを1として足すため、AgeがNAの人数を数えられます。
 sum(age_is_missing)
 
-# 55人のAgeが欠けています。埋め方はまだ学んでいないため、
+# 53人のAgeが欠けています。埋め方はまだ学んでいないため、
 # Round 1ではAgeを使わず、欠損のないPclassとSexだけを使います。
 
 

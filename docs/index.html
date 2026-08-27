@@ -266,8 +266,8 @@ survival_rate</textarea>
           <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
           <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
         </div>
-        <div class="predict"><strong>実行前の予想</strong><span>0と1の間の数が一つ返ります。約<code>0.511</code>なら、1が51.1%です。</span></div>
-        <div class="takeaway"><strong>何もしない基準は約0.511</strong><span>trainでは1がわずかに多いため、全員を1と答えるだけでも約51.1%です。challengeでも同じとは限りませんが、比較の出発点になります。</span></div>
+        <div class="predict"><strong>実行前の予想</strong><span>0と1の間の数が一つ返ります。約<code>0.505</code>なら、1が50.5%です。</span></div>
+        <div class="takeaway"><strong>何もしない基準は約0.505</strong><span>trainでは1がわずかに多いため、全員を1と答えるだけでも約50.5%です。challengeでも同じとは限りませんが、比較の出発点になります。</span></div>
       </div>
     </section>
 
@@ -289,7 +289,7 @@ sum(age_is_missing)</textarea>
           <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
         </div>
         <div class="vector-demo"><code>Age</code><span>36.7　40.7　NA　57.4</span><i>→</i><code>is.na()</code><span>FALSE　FALSE　TRUE　FALSE</span></div>
-        <div class="warning-card"><strong>Round 1ではAgeを使わない</strong><span>55人のAgeが欠けています。埋め方をまだ学んでいないので、今回は勝手に埋めず、欠損のない<code>Pclass</code>と<code>Sex</code>から始めます。これも分析上の判断です。</span></div>
+        <div class="warning-card"><strong>Round 1ではAgeを使わない</strong><span>53人のAgeが欠けています。埋め方をまだ学んでいないので、今回は勝手に埋めず、欠損のない<code>Pclass</code>と<code>Sex</code>から始めます。これも分析上の判断です。</span></div>
       </div>
     </section>
 
@@ -339,8 +339,8 @@ sex_by_answer</textarea>
           <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
         </div>
         <div class="rate-reading" aria-label="性別ごとの生存割合の計算">
-          <article><h3>female</h3><p><b>175</b> ÷ (100 + 175)</p><strong>約64%</strong><span class="rate-bar"><i style="width:64%"></i></span></article>
-          <article><h3>male</h3><p><b>147</b> ÷ (208 + 147)</p><strong>約41%</strong><span class="rate-bar"><i style="width:41%"></i></span></article>
+          <article><h3>female</h3><p><b>154</b> ÷ (89 + 154)</p><strong>約63%</strong><span class="rate-bar"><i style="width:63%"></i></span></article>
+          <article><h3>male</h3><p><b>164</b> ÷ (223 + 164)</p><strong>約42%</strong><span class="rate-bar"><i style="width:42%"></i></span></article>
         </div>
         <div class="takeaway"><strong>見つけたのは関係で、原因ではない</strong><span>このtrainでは割合が異なります。その違いを予測の手がかりにはできますが、Sexが生存を引き起こしたとまでは言えません。</span></div>
       </div>
