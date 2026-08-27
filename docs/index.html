@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Titanicから着想を得た合成データで、Rのデータ分析パイプラインと予測提出を体験する授業用ページ">
+  <title>第3回｜Rでつなぐ、データ分析パイプライン</title>
+  <link rel="stylesheet" href="styles.css?v=20260827-beginner1">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+
+  <header class="hero hero--lecture03">
+    <div class="hero__inner">
+      <p class="eyebrow">応用データサイエンス演習 · DSC3010J · 2026年度 夏学期</p>
+      <h1>Rでつなぐ、データ分析パイプライン</h1>
+      <p class="hero__lead">「データ分析は、何をどの順番で進めるのか」を、正解つきの練習データと正解を隠した小テストで学びます。データコンペも回帰分析も、知っている前提では始めません。</p>
+      <div class="hero__meta">
+        <span>第3回</span>
+        <span>Titanic-inspired</span>
+        <span>インストール不要</span>
+        <span>全9ステップ</span>
+        <span>公式提出は2回</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="runtime-bar" id="runtime-bar">
+    <div class="runtime-bar__inner">
+      <div class="runtime-status" role="status" aria-live="polite">
+        <span class="status-dot status-dot--loading" id="status-dot" aria-hidden="true"></span>
+        <div>
+          <strong id="status-title">Rを準備中</strong>
+          <span id="status-detail">初回は30秒から1分ほどかかります</span>
+        </div>
+      </div>
+      <button class="button button--quiet" id="restart-button" type="button">最初からやり直す</button>
+    </div>
+    <div class="runtime-bar__progress" aria-hidden="true"><i id="bar-progress-fill"></i></div>
+  </div>
+
+  <main id="main">
+    <section class="synthetic-notice content-width" aria-labelledby="synthetic-title">
+      <div>
+        <p class="section-label">DATA NOTE</p>
+        <h2 id="synthetic-title">これは授業用の架空データです</h2>
+        <p>Titanic/Kaggleの列形式と予測課題から着想を得ていますが、乗客、船内配置、救助の仕組み、生存結果はすべて授業用に生成したものです。実際のタイタニック号に関する歴史的事実を表しません。</p>
+      </div>
+    </section>
+
+    <section class="beginner-start content-width" aria-labelledby="start-title">
+      <p class="section-label">START HERE</p>
+      <h2 id="start-title">今日は、三つともゼロから始めます</h2>
+      <p class="beginner-start__lead">前回までに学んだのは、値、ベクトル、関数、<code>&lt;-</code>、<code>$</code>などRの土台です。今日はその土台を使い、初めて一本のデータ分析を最後まで通します。</p>
+      <div class="start-grid">
+        <article><span>1</span><h3>データ分析とは？</h3><p>問いを決め、データを確かめ、関係を見つけ、結論や予測を作る一連の仕事です。</p></article>
+        <article><span>2</span><h3>データコンペとは？</h3><p>正解を隠した同じ問題を全員で予測し、同じ物差しで採点する練習です。</p></article>
+        <article><span>3</span><h3>回帰・モデルとは？</h3><p>複数の手がかりから結果を予測する「共通の規則」です。数式の導出は今日の目標ではありません。</p></article>
+      </div>
+      <div class="takeaway"><strong>今日のゴール</strong><span>一位になることではなく、「なぜこの順番で分析し、何を根拠に一か所変えたか」を自分の言葉で説明できることです。</span></div>
+    </section>
+
+    <section class="competition-primer content-width" aria-labelledby="competition-title">
+      <p class="section-label">WHY A COMPETITION?</p>
+      <h2 id="competition-title">データコンペは「答えつき練習問題＋答えを隠した小テスト」</h2>
+      <p class="competition-primer__lead"><strong>Kaggle</strong>は、企業や研究者がデータの予測問題を公開し、参加者が予測を提出できるウェブサイトです。今日はKaggleの操作を覚えるのではなく、その仕組みを小さく再現して、データ分析の一周を体験します。</p>
+
+      <div class="competition-analogy" aria-label="データコンペの四つの要素">
+        <article><span>答えつき練習問題</span><strong>train</strong><p>乗客情報と正解の0/1がある。ここから規則を考えます。</p></article>
+        <i aria-hidden="true">→</i>
+        <article><span>答えを隠した小テスト</span><strong>challenge</strong><p>乗客情報だけがある。同じ規則で0/1を予測します。</p></article>
+        <i aria-hidden="true">→</i>
+        <article><span>採点箱</span><strong>submit</strong><p>予測だけを提出し、サーバーが隠し正解と比べます。</p></article>
+        <i aria-hidden="true">→</i>
+        <article><span>返ってくる結果</span><strong>score</strong><p>正しく当てた割合。全員が同じ採点基準で比べられます。</p></article>
+      </div>
+
+      <div class="competition-roles">
+        <article><h3>教員＝主催者</h3><p>問題、データ、採点方法を用意し、challengeの正解を隠します。</p></article>
+        <article><h3>学生＝分析者</h3><p>trainだけを見て規則を作り、challengeの予測を提出します。</p></article>
+        <article><h3>採点サイト</h3><p>予測と隠し正解を照合し、Accuracyとランキングを返します。</p></article>
+      </div>
+
+      <div class="warning-card"><strong>scoreが教えるのは予測精度だけ</strong><span>高いscoreでも、原因を説明したこと、公平であること、よい分析過程だったことにはなりません。競争は成績評価ではなく、未知データへの予測をすぐ確かめるための仕掛けです。</span></div>
+    </section>
+
+    <section class="pipeline-overview content-width" aria-labelledby="pipeline-title">
+      <p class="section-label">TODAY'S MAP</p>
+      <h2 id="pipeline-title">最初に地図を見る：問いからscoreまでの一周</h2>
+      <p>下の九つのRステップは、この流れの一部分ずつを実行します。実行前に、いま地図のどこにいるかを必ず確認します。</p>
+
+      <figure class="pipeline-flow" aria-labelledby="pipeline-caption">
+        <ol class="pipeline-flow__steps">
+          <li><span class="flow-number">1</span><h3>問い</h3><p>未知の乗客の生存0/1を予測する</p><small>分析：何を知りたいか</small></li>
+          <li><span class="flow-number">2</span><h3>trainを確認</h3><p>行、列、正解の割合、欠損を見る</p><small>問01〜04</small></li>
+          <li><span class="flow-number">3</span><h3>使う形を決める</h3><p>等級を区分として扱う</p><small>問05</small></li>
+          <li><span class="flow-number">4</span><h3>関係を見る</h3><p>集団ごとの正解数を比べる</p><small>問06</small></li>
+          <li><span class="flow-number">5</span><h3>規則を学ぶ</h3><p>trainから確率を出すモデルを作る</p><small>問07</small></li>
+          <li><span class="flow-number">6</span><h3>challengeを予測</h3><p>同じ規則で確率と0/1を出す</p><small>問08</small></li>
+          <li><span class="flow-number">7</span><h3>提出・評価</h3><p>CSVを作り、隠し正解で採点する</p><small>問09・score</small></li>
+        </ol>
+        <div class="pipeline-flow__loop"><span aria-hidden="true">↶</span><p>scoreを見たら、理由を書いて一か所だけ変え、もう一周します。</p></div>
+        <figcaption id="pipeline-caption">trainで決めた規則を固定してchallengeへ使うため、「見たことのない人にも通用したか」を確かめられます。</figcaption>
+      </figure>
+
+      <div class="why-competition-grid">
+        <article><h3>正解をのぞかない</h3><p>trainとchallengeを分けると、未知データで試すという約束を守れます。</p></article>
+        <article><h3>全部を一本につなぐ</h3><p>途中の判断がCSVとscoreまで届くので、分析の各段階が孤立しません。</p></article>
+        <article><h3>変更理由を比べる</h3><p>一か所だけ変えると、どの仮説がscore差につながったか話せます。</p></article>
+      </div>
+    </section>
+
+    <section class="class-timeline content-width" aria-labelledby="timeline-title">
+      <p class="section-label">90 MINUTES</p>
+      <h2 id="timeline-title">今日の進み方</h2>
+      <ol>
+        <li><time>0–15分</time><span>分析とデータコンペの仕組み、全体地図</span></li>
+        <li><time>15–35分</time><span>問01〜04：データを確かめる</span></li>
+        <li><time>35–47分</time><span>問05〜06：形を決め、関係を見る</span></li>
+        <li><time>47–62分</time><span>回帰の図解と問07〜09</span></li>
+        <li><time>62–78分</time><span>Round 1、理由を書いて一変更、Round 2</span></li>
+        <li><time>78–90分</time><span>scoreの限界、GitHub教員デモ、exit ticket</span></li>
+      </ol>
+    </section>
+
+    <section class="intro content-width" aria-labelledby="challenge-title">
+      <div class="intro__main">
+        <p class="section-label">THE DATA</p>
+        <h2 id="challenge-title">同じ列を持つ、二つの表を使う</h2>
+        <div class="dataset-pair" aria-label="trainとchallengeの違い">
+          <article><h3>train：630人</h3><p>乗客情報 <strong>＋ 正解Survived</strong></p><small>関係を調べ、予測規則を学ぶ</small></article>
+          <article><h3>challenge：270人</h3><p>乗客情報 <strong>だけ</strong></p><small>trainで決めた規則を使って0/1を予測</small></article>
+        </div>
+        <p>二つを混ぜません。challengeの正解を見ないまま最後に採点するから、規則が未知の人にも通用したかを確かめられます。</p>
+        <div class="download-row">
+          <a class="button button--quiet" href="data/titanic_train.csv" download>train.csv</a>
+          <a class="button button--quiet" href="data/titanic_challenge.csv" download>challenge.csv</a>
+        </div>
+      </div>
+      <aside class="note-card">
+        <h3>Accuracy＝正答率</h3>
+        <p class="accuracy-example"><strong>3</strong><span>正解</span><i>÷</i><strong>4</strong><span>全員</span><i>=</i><b>0.75</b></p>
+        <p>4人中3人を正しく当てたら0.75、つまり75%です。今日の本番では270人で計算します。</p>
+      </aside>
+    </section>
+
+    <section class="data-guide content-width" aria-labelledby="data-guide-title">
+      <p class="section-label">DATA DICTIONARY</p>
+      <h2 id="data-guide-title">列名は、何を表すのか</h2>
+      <p>表では<strong>1行が1人</strong>、<strong>1列が一つの項目</strong>です。まず使う列を日本語にしてからコードへ進みます。</p>
+      <div class="table-scroll"><table class="data-dictionary">
+        <thead><tr><th>列名</th><th>意味</th><th>例</th><th>今日の役割</th></tr></thead>
+        <tbody>
+          <tr><td><code>PassengerId</code></td><td>一人ずつ異なる識別番号</td><td>1825</td><td>予測材料ではなく、提出時に人と予測を結ぶ</td></tr>
+          <tr><td><code>Pclass</code></td><td>客室等級（1等・2等・3等）</td><td>2</td><td>予測の手がかり</td></tr>
+          <tr><td><code>Sex</code></td><td>性別カテゴリー</td><td>male</td><td>予測の手がかり</td></tr>
+          <tr><td><code>Age</code></td><td>年齢。空欄の人もいる</td><td>36.7</td><td>欠損を確認するがRound 1では使わない</td></tr>
+          <tr><td><code>Fare</code></td><td>運賃</td><td>94.08</td><td>Round 2で追加できる候補</td></tr>
+          <tr><td><code>SibSp</code></td><td>同乗した兄弟姉妹・配偶者の人数</td><td>2</td><td>Round 2候補</td></tr>
+          <tr><td><code>Parch</code></td><td>同乗した親・子の人数</td><td>1</td><td>Round 2候補</td></tr>
+          <tr><td><code>Survived</code></td><td>正解。0＝非生存、1＝生存</td><td>1</td><td>trainだけにある予測したい列</td></tr>
+        </tbody>
+      </table></div>
+      <details class="secondary-columns"><summary>今回は使わない列も確認する</summary><p><code>Embarked</code>は乗船港、<code>Cabin</code>は客室記号、<code>LocationCode</code>は位置を表す匿名コードです。初回モデルへ全部を入れる必要はありません。</p></details>
+
+      <div class="preloaded-code">
+        <div><strong>ページが先に実行した「Step 0」</strong><span>今日はファイル場所の設定で止まらないよう、二つのCSVはすでにRへ読み込んであります。</span></div>
+        <pre><code># read.csv() はCSVファイルを表として読む関数
+train &lt;- read.csv("titanic_train.csv")
+challenge &lt;- read.csv("titanic_challenge.csv")</code></pre>
+        <p><code>&lt;-</code>で保存しただけなので、画面に返事が出なくても成功です。公開repoのRファイルでは、この読込から全部を確認できます。</p>
+      </div>
+    </section>
+
+    <section class="how-to content-width" aria-labelledby="howto-title">
+      <h2 id="howto-title">新しい記号は、読む場所を決めてから実行する</h2>
+      <p>各コードには、人間向けの説明を<code>#</code>で入れています。<code>#</code>より右はコメントなので、Rは実行しません。</p>
+      <div class="comment-demo" aria-label="Rコードの読み方">
+        <pre><code><span># Survived列の平均を計算する</span>
+survival_rate <b>&lt;-</b> mean(train<b>$</b>Survived)</code></pre>
+        <dl>
+          <div><dt><code>#</code></dt><dd>人間向けメモ。Rは無視する</dd></div>
+          <div><dt><code>&lt;-</code></dt><dd>右の結果を左の名前へ保存</dd></div>
+          <div><dt><code>mean(材料)</code></dt><dd>括弧の材料を関数へ渡す</dd></div>
+          <div><dt><code>表$列</code></dt><dd>表から列を一本取り出す</dd></div>
+          <div><dt><code>名前 = 値</code></dt><dd>関数へ渡す設定に名前を付ける</dd></div>
+        </dl>
+      </div>
+      <div class="three-steps">
+        <article><span class="step-number">1</span><h3>目的を読む</h3><p>コメントで「なぜこの作業をするか」を確認します。</p></article>
+        <article><span class="step-number">2</span><h3>返事を予想</h3><p>人数、列名、表、確率のどれが返るか考えます。</p></article>
+        <article><span class="step-number">3</span><h3>順番に実行</h3><p>完了すると次の問が開きます。困ったら「元に戻す」。</p></article>
+      </div>
+      <div class="r-output-guide"><code>[1] 630</code><p>Rの返事に付く<code>[1]</code>は「この行は1番目の値から表示」という目印です。問番号でも答えの一部でもありません。</p></div>
+      <div class="progress-panel" role="group" aria-label="進み具合">
+        <div class="progress-panel__labels">
+          <span>実行して確かめたステップ</span>
+          <strong><span id="completed-count">0</span> / <span id="total-count">9</span></strong>
+        </div>
+        <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+    </section>
+
+    <nav class="chapter-nav content-width" aria-label="章の一覧">
+      <a href="#part-a"><span>PART A</span> データを確かめる</a>
+      <a href="#part-b"><span>PART B</span> 使う形を決める</a>
+      <a href="#part-c"><span>PART C</span> 図で理解して予測する</a>
+      <a href="#submit"><span>SUBMIT</span> CSVを採点する</a>
+    </nav>
+
+    <section class="part-heading" id="part-a">
+      <div class="content-width"><p>PART A · 地図の2</p><h2>trainを確かめる</h2><span>問01〜04　　人数・列名・正解の割合・欠損</span></div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c01-title">
+      <div class="lesson__number">01</div>
+      <div class="lesson__body">
+        <h2 id="c01-title">trainとchallengeの行数を確かめる</h2>
+        <p><strong>なぜ？</strong>　違うファイルを読んだり、一部の行が欠けたりしていないかを、最初に人数で確かめるためです。</p>
+        <div class="syntax-card"><code>nrow(表)</code><span><b>復習</b>：括弧の中の表について、行の数を一つ返します。</span></div>
+        <div class="r-cell" data-cell-id="01">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>二つの表を確認</span></div>
+          <textarea aria-label="問01のRコード" spellcheck="false"># 目的：表に何人いるかを確かめる
+# nrow(表) は、表の行数＝乗客数を返す
+nrow(train)       # 正解つきの練習データ
+nrow(challenge)   # 正解を隠した小テスト</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="predict"><strong>実行前の予想</strong><span><code>[1] 630</code>と<code>[1] 270</code>が一つずつ返るはずです。</span></div>
+        <div class="takeaway"><strong>630人から学び、270人を予測</strong><span>ここは地図の「trainを確認」に当たります。まだモデルは作りません。</span></div>
+      </div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c02-title">
+      <div class="lesson__number">02</div>
+      <div class="lesson__body">
+        <h2 id="c02-title">列の名前を確かめる</h2>
+        <p><strong>なぜ？</strong>　使おうとしている列が本当にあり、つづりが合っているかを確かめるためです。型を一度に読む<code>str()</code>は今日は教員の確認に留めます。</p>
+        <div class="syntax-card"><code>names(表)</code><span><b>今日初めて</b>：表に付いている列名だけを一覧にします。</span></div>
+        <div class="r-cell" data-cell-id="02">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>列名だけを見る</span></div>
+          <textarea aria-label="問02のRコード" spellcheck="false"># 目的：trainにどんな列があるかを確かめる
+# names(表) は、列名のベクトルを返す
+names(train)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="predict"><strong>どこを見る？</strong><span><code>Pclass</code>、<code>Sex</code>、<code>Age</code>、<code>Survived</code>が辞書どおりにあるか探します。</span></div>
+        <div class="explanation"><strong><code>train$Age</code>は一人の年齢ではない</strong><span><code>$</code>で列を1本取り出すと、630人分の値が行順に並ぶベクトルになります。</span></div>
+      </div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c03-title">
+      <div class="lesson__number">03</div>
+      <div class="lesson__body">
+        <h2 id="c03-title">何もしない予測の基準点を置く</h2>
+        <p><strong>なぜ？</strong>　0/1のうち多い方を全員に答えるだけでも当たるため、モデルはその単純な答えより役立つかを比べる必要があります。</p>
+        <div class="syntax-card"><code>mean(0/1の列)</code><span><b>復習</b>：0と1の平均は、1が占める割合になります。</span></div>
+        <div class="r-cell" data-cell-id="03">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>目的変数の分布</span></div>
+          <textarea aria-label="問03のRコード" spellcheck="false"># 目的：Survived = 1 の割合を知る
+# 0/1の平均は、1の人数 ÷ 全人数と同じ
+survival_rate &lt;- mean(train$Survived)
+survival_rate</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="predict"><strong>実行前の予想</strong><span>0と1の間の数が一つ返ります。約<code>0.511</code>なら、1が51.1%です。</span></div>
+        <div class="takeaway"><strong>何もしない基準は約0.511</strong><span>trainでは1がわずかに多いため、全員を1と答えるだけでも約51.1%です。challengeでも同じとは限りませんが、比較の出発点になります。</span></div>
+      </div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c04-title">
+      <div class="lesson__number">04</div>
+      <div class="lesson__body">
+        <h2 id="c04-title">Ageの欠損を数え、使うか決める</h2>
+        <p><strong>なぜ？</strong>　値がない列をそのままモデルへ渡すと、使える乗客が減ったり、予測が作れなかったりするためです。</p>
+        <div class="syntax-card"><code>sum(is.na(列))</code><span><code>is.na()</code>がNAだけをTRUEにし、復習の<code>sum()</code>がTRUEの数を数えます。内側から読みます。</span></div>
+        <div class="r-cell" data-cell-id="04">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>Ageだけを確認</span></div>
+          <textarea aria-label="問04のRコード" spellcheck="false"># 目的：Age列に値がない人を数える
+# 1. is.na() が630人へ「NAですか」と尋ねる
+age_is_missing &lt;- is.na(train$Age)
+
+# 2. TRUEを1として足すと、NAの人数になる
+sum(age_is_missing)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="vector-demo"><code>Age</code><span>36.7　40.7　NA　57.4</span><i>→</i><code>is.na()</code><span>FALSE　FALSE　TRUE　FALSE</span></div>
+        <div class="warning-card"><strong>Round 1ではAgeを使わない</strong><span>55人のAgeが欠けています。埋め方をまだ学んでいないので、今回は勝手に埋めず、欠損のない<code>Pclass</code>と<code>Sex</code>から始めます。これも分析上の判断です。</span></div>
+      </div>
+    </section>
+
+    <section class="part-heading" id="part-b">
+      <div class="content-width"><p>PART B · 地図の3〜4</p><h2>使う形を決め、関係を見る</h2><span>問05〜06　　カテゴリー・クロス表・集団の違い</span></div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c05-title">
+      <div class="lesson__number">05</div>
+      <div class="lesson__body">
+        <h2 id="c05-title">Pclassの1・2・3を「量」ではなく「区分」にする</h2>
+        <p><strong>なぜ？</strong>　数字で記録されていても、3等は1等の3倍という量ではありません。1等・2等・3等という三つのラベルとしてRへ伝えます。</p>
+        <div class="syntax-card"><code>factor(ベクトル)</code><span><b>今日初めて</b>：値を計算上の量ではなく、カテゴリーとして扱います。</span></div>
+        <div class="r-cell" data-cell-id="05">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>同じ三つの区分を設定</span></div>
+          <textarea aria-label="問05のRコード" spellcheck="false"># 目的：Pclassを1等・2等・3等の区分として扱う
+# c() で、使うラベルを三つ並べる
+class_levels &lt;- c(1, 2, 3)
+
+# trainとchallengeへ、同じ区分を設定する
+train$Pclass &lt;- factor(train$Pclass, levels = class_levels)
+challenge$Pclass &lt;- factor(challenge$Pclass, levels = class_levels)
+
+# levels() は設定されたラベルを返す
+levels(train$Pclass)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="predict"><strong>実行前の予想</strong><span><code>"1" "2" "3"</code>の三つが返ります。数字に見えても、引用符つきのラベルとして表示されます。</span></div>
+        <div class="takeaway"><strong>二つの表へ同じ処理</strong><span>trainで使った区分をchallengeでも同じ意味にそろえます。別々の規則を作らないことがpipelineの約束です。</span></div>
+      </div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c06-title">
+      <div class="lesson__number">06</div>
+      <div class="lesson__body">
+        <h2 id="c06-title">モデルより先に、SexとSurvivedの人数表を見る</h2>
+        <p><strong>なぜ？</strong>　どの手がかりに予測との関係がありそうか、モデルを使う前に自分の目で確かめ、仮説を持つためです。</p>
+        <div class="syntax-card"><code>table(行, 列)</code><span><b>今日初めての使い方</b>：二つのベクトルを組み合わせ、カテゴリーごとの人数表を作ります。</span></div>
+        <div class="r-cell" data-cell-id="06">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>行＝Sex、列＝正解0/1</span></div>
+          <textarea aria-label="問06のRコード" spellcheck="false"># 目的：SexごとにSurvivedの0/1を何人ずつ数える
+# 1番目の材料が表の行、2番目が列になる
+sex_by_answer &lt;- table(train$Sex, train$Survived)
+sex_by_answer</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>実行する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="rate-reading" aria-label="性別ごとの生存割合の計算">
+          <article><h3>female</h3><p><b>175</b> ÷ (100 + 175)</p><strong>約64%</strong><span class="rate-bar"><i style="width:64%"></i></span></article>
+          <article><h3>male</h3><p><b>147</b> ÷ (208 + 147)</p><strong>約41%</strong><span class="rate-bar"><i style="width:41%"></i></span></article>
+        </div>
+        <div class="takeaway"><strong>見つけたのは関係で、原因ではない</strong><span>このtrainでは割合が異なります。その違いを予測の手がかりにはできますが、Sexが生存を引き起こしたとまでは言えません。</span></div>
+      </div>
+    </section>
+
+    <section class="part-heading" id="part-c">
+      <div class="content-width"><p>PART C · 地図の5〜7</p><h2>図で理解してから、モデルで予測する</h2><span>問07〜09　　ロジスティック回帰・確率・0/1・CSV</span></div>
+    </section>
+
+    <section class="model-primer content-width" aria-labelledby="model-primer-title">
+      <p class="section-label">BEFORE THE CODE</p>
+      <h2 id="model-primer-title">回帰とは、ばらついた人々を「一本の共通規則」で要約する方法</h2>
+      <p class="model-primer__lead">一つの点が一人を表します。人は同じではないので点はばらつきます。回帰はばらつきを消す魔法ではなく、全体に見られる大まかな関係を予測規則にまとめる方法です。</p>
+
+      <div class="model-panels">
+        <article class="model-panel">
+          <h3>1　普通の回帰：点の真ん中に直線を通す</h3>
+          <svg viewBox="0 0 400 270" role="img" aria-labelledby="linear-title linear-desc">
+            <title id="linear-title">点群に予測直線を引いた普通の回帰</title>
+            <desc id="linear-desc">横軸の手がかりが大きくなるほど縦軸の結果も大きくなる点群を、右上がりの直線で要約しています。</desc>
+            <line class="chart-axis" x1="52" y1="218" x2="372" y2="218"/><line class="chart-axis" x1="52" y1="218" x2="52" y2="30"/>
+            <g class="chart-points"><circle cx="80" cy="194" r="6"/><circle cx="104" cy="173" r="6"/><circle cx="124" cy="187" r="6"/><circle cx="148" cy="151" r="6"/><circle cx="171" cy="164" r="6"/><circle cx="194" cy="128" r="6"/><circle cx="219" cy="142" r="6"/><circle cx="243" cy="106" r="6"/><circle cx="266" cy="120" r="6"/><circle cx="292" cy="81" r="6"/><circle cx="318" cy="94" r="6"/><circle cx="346" cy="57" r="6"/></g>
+            <line class="regression-line" x1="70" y1="204" x2="356" y2="55"/>
+            <text class="chart-label" x="264" y="44">予測の直線</text><text class="chart-label" x="270" y="249">手がかり x</text><text class="chart-label" x="18" y="132" transform="rotate(-90 18 132)">連続した結果 y</text>
+          </svg>
+          <p class="model-equation"><span>予測値</span> = <var>a</var> + <var>b</var> × <var>x</var></p>
+          <p><var>a</var>は出発点、<var>b</var>は手がかり<var>x</var>が変わったときに予測がどれだけ動くかです。Rが点全体に合う値を探します。</p>
+        </article>
+
+        <article class="model-panel">
+          <h3>2　答えが0/1：S字で「確率」に収める</h3>
+          <svg viewBox="0 0 400 270" role="img" aria-labelledby="logistic-title logistic-desc">
+            <title id="logistic-title">ロジスティック回帰のS字曲線と0.5の境界</title>
+            <desc id="logistic-desc">生存しやすさが上がるにつれて確率が0から1へS字状に上がり、0.5未満を0、0.5以上を1と予測します。</desc>
+            <rect class="predict-zero-area" x="53" y="29" width="157" height="190"/><rect class="predict-one-area" x="210" y="29" width="162" height="190"/>
+            <line class="chart-axis" x1="52" y1="218" x2="372" y2="218"/><line class="chart-axis" x1="52" y1="218" x2="52" y2="29"/>
+            <line class="threshold-line" x1="52" y1="124" x2="372" y2="124"/><line class="threshold-line" x1="210" y1="29" x2="210" y2="218"/>
+            <path class="logistic-line" d="M60 211 C140 211 174 187 202 139 C233 84 273 37 365 36"/>
+            <text class="chart-label" x="19" y="36">1.0</text><text class="chart-label" x="19" y="129">0.5</text><text class="chart-label" x="26" y="222">0</text>
+            <text class="chart-label" x="70" y="56">予測0</text><text class="chart-label" x="292" y="56">予測1</text><text class="threshold-label" x="218" y="117">境界0.5</text><text class="chart-label" x="185" y="249">生存しやすさ z</text>
+          </svg>
+          <div class="model-equation model-equation--stack">
+            <span><var>z</var> = <var>b</var><sub>0</sub> + <var>b</var><sub>1</sub> × 等級 + <var>b</var><sub>2</sub> × 性別</span>
+            <span><var>p</var> = 1 ÷ (1 + <var>e</var><sup>−z</sup>)</span>
+          </div>
+          <p>まず情報を一つの点数<var>z</var>へまとめ、S字で0〜1の確率<var>p</var>へ変えます。式の暗記・手計算・係数の解釈は今日は不要です。</p>
+        </article>
+      </div>
+
+      <div class="passenger-probability" aria-label="一人の乗客を予測する流れ">
+        <article><span>乗客の手がかり</span><strong>2等・female</strong></article><i aria-hidden="true">→</i>
+        <article><span>Rが重みを付ける</span><strong>点数 z</strong></article><i aria-hidden="true">→</i>
+        <article><span>S字で0〜1へ</span><strong>確率 p = 0.72</strong></article><i aria-hidden="true">→</i>
+        <article><span>0.5以上</span><strong>予測 1</strong></article>
+      </div>
+
+      <div class="model-code-bridge" aria-label="図とRコードの対応">
+        <article><code>glm()</code><p>trainの正解に合う重みを探し、規則を学ぶ。</p></article><i aria-hidden="true">→</i>
+        <article><code>predict()</code><p>同じ規則でchallengeの確率を出す。</p></article><i aria-hidden="true">→</i>
+        <article><code>ifelse()</code><p>0.5を境に、提出用の0/1へ変える。</p></article>
+      </div>
+
+      <div class="takeaway"><strong>ロジスティック回帰＝0/1用の回帰</strong><span>普通の直線は0未満や1より大きい値を出せます。S字を使うロジスティック回帰なら、予測を必ず0〜1の確率に収められます。</span></div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c07-title">
+      <div class="lesson__number">07</div>
+      <div class="lesson__body">
+        <h2 id="c07-title">trainから、確率を出す規則を学ぶ</h2>
+        <p><strong>なぜ？</strong>　PclassとSexを同時に使い、一人ずつの生存確率を同じ規則で出せるようにするためです。</p>
+        <div class="formula-reading" aria-label="Rのformulaの読み方">
+          <code>Survived</code><span>を</span><code>~</code><span>次の手がかりで予測</span><code>Pclass + Sex</code>
+          <small><code>~</code>は「左を右で予測」、<code>+</code>は「手がかりを追加」。ここでは足し算ではありません。</small>
+        </div>
+        <div class="r-cell" data-cell-id="07">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>図の「規則を学ぶ」</span></div>
+          <textarea aria-label="問07のRコード" spellcheck="false"># 目的：trainから0/1用の予測規則を学ぶ
+# glm() は、formulaに合う重みをtrainから探す
+model &lt;- glm(
+  Survived ~ Pclass + Sex,
+  data = train,
+  family = binomial()
+)
+
+# nobs() は、規則を学ぶのに使えた人数を返す
+nobs(model)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>モデルを推定する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="code-argument-guide">
+          <article><code>data = train</code><p>どの表から学ぶか</p></article>
+          <article><code>family = binomial()</code><p>答えが0/1のロジスティック回帰</p></article>
+          <article><code>model &lt;-</code><p>学んだ規則をmodelという名前で保存</p></article>
+        </div>
+        <div class="predict"><strong>実行前の予想</strong><span><code>model &lt;- glm(...)</code>は保存なので何も表示せず、最後の<code>nobs(model)</code>が<code>630</code>を返すはずです。</span></div>
+        <div class="explanation"><strong>長い係数表は今日は見ない</strong><span><code>summary(model)</code>には未習の統計用語が多数出るため外しました。今日は「何を入力し、何が出る規則か」に集中します。</span></div>
+      </div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c08-title">
+      <div class="lesson__number">08</div>
+      <div class="lesson__body">
+        <h2 id="c08-title">同じ規則でchallengeの確率を出し、0/1へ変える</h2>
+        <p><strong>なぜ？</strong>　モデルを作っただけでは提出になりません。正解を隠した270人へ規則を適用し、提出形式の0/1へ変えます。</p>
+        <div class="syntax-card"><code>predict(model, newdata = 表)</code><span><b>今日初めて</b>：学習済みの規則を、新しい表の各行へ適用します。</span></div>
+        <div class="r-cell" data-cell-id="08">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>図の「確率 → 0/1」</span></div>
+          <textarea aria-label="問08のRコード" spellcheck="false"># 目的：modelをchallengeの270人へ適用する
+# type = "response" は、0〜1の確率を返す指定
+probability &lt;- predict(
+  model,
+  newdata = challenge,
+  type = "response"
+)
+
+# 270個の確率を一度に0.5と比較する
+# TRUEなら1、FALSEなら0へ変える
+prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
+
+# head() は、先頭の6人だけを表示する
+head(probability)
+head(prediction)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>予測する</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="code-argument-guide">
+          <article><code>model</code><p>問07でtrainから学んだ規則</p></article>
+          <article><code>newdata = challenge</code><p>規則を使う新しい270人</p></article>
+          <article><code>type = "response"</code><p>点数ではなく0〜1の確率を返す</p></article>
+        </div>
+        <div class="syntax-card"><code>ifelse(条件, TRUEのとき, FALSEのとき)</code><span><b>今日初めて</b>：270人を一人ずつ書かず、270個の条件を同じ順番でまとめて0/1へ変えます。</span></div>
+        <div class="vector-demo vector-demo--stack"><code>0.72　0.31　0.55　…</code><span><code>&gt;= 0.5</code></span><code>TRUE　FALSE　TRUE　…</code><span><code>ifelse()</code></span><code>1　0　1　…</code></div>
+        <div class="warning-card"><strong>0.5は自然法則ではない</strong><span>今回は提出用に決めた境界です。0.72は「必ず1」ではなく、モデルが72%と見積もったという意味です。</span></div>
+      </div>
+    </section>
+
+    <section class="lesson content-width" aria-labelledby="c09-title">
+      <div class="lesson__number">09</div>
+      <div class="lesson__body">
+        <h2 id="c09-title">PassengerIdと予測を2列に並べ、CSVを作る</h2>
+        <p><strong>なぜ？</strong>　採点する側が「どの乗客への答えか」を分かるように、IDと0/1を決められた列名で渡します。ここまでの問01〜08が一本につながっているので、この問ではその結果をファイルへ出します。</p>
+        <div class="r-cell" data-cell-id="09">
+          <div class="r-cell__head"><span>Rに伝える文</span><span>図の「CSVを提出」</span></div>
+          <textarea aria-label="問09のRコード" spellcheck="false"># data.frame() は、同じ長さの列を横に並べて表を作る
+# 左側が提出ファイルの列名、右側が入れるデータ
+submission <- data.frame(
+  PassengerId = challenge$PassengerId,
+  Survived = prediction
+)
+
+# write.csv() は、Rの表をCSVファイルとして保存する
+# row.names = FALSE は、余分な行番号を付けない指定
+write.csv(
+  submission,
+  "/home/web_user/titanic_submission.csv",
+  row.names = FALSE
+)
+
+head(submission)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>CSVを作る</button><button class="button button--quiet restore-button" type="button">元に戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rからの返事</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="code-argument-guide">
+          <article><code>data.frame()</code><p>二つの列を横に並べ、提出用の表を作る</p></article>
+          <article><code>write.csv()</code><p>その表を、採点箱が読めるCSVへ保存する</p></article>
+          <article><code>head(submission)</code><p>保存前の表から、先頭6人を画面で確認する</p></article>
+        </div>
+        <div class="download-panel">
+          <div><strong>問09がエラーなく終わったら</strong><span>そのまま下の採点箱から提出できます。内容を確認したい場合はダウンロードしてください。</span></div>
+          <button class="button" id="download-submission" type="button" disabled>先に問09を実行してください</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="decision-section content-width" aria-labelledby="round2-title">
+      <p class="section-label">BEFORE ROUND 2</p>
+      <h2 id="round2-title">scoreを見る前に、変更と予想を言葉にする</h2>
+      <div class="decision-grid">
+        <article><h3>何を変えるか</h3><p>問07に <code>+ Fare</code> / <code>+ SibSp</code> / <code>+ Parch</code> を一つ足すか、問08の <code>0.5</code> を <code>0.4</code> / <code>0.6</code> に変えます。</p></article>
+        <article><h3>なぜ変えるか</h3><p>データのどの表や図が、その判断を支えているか。</p></article>
+        <article><h3>何が起きると予想するか</h3><p>scoreは上がる、下がる、それとも分からないか。</p></article>
+      </div>
+      <div class="explanation"><strong>変更した場所から問09まで、順にもう一度実行</strong><span>問07を変えたら07 → 08 → 09、問08を変えたら08 → 09です。変数を足しても、境界を変えても、必ずscoreが上がるとは限りません。交互作用や欠損補完は新しい概念なので、今日は扱いません。</span></div>
+      <div class="warning-card"><strong>公式提出は2回まで</strong><span>何度もchallengeのscoreへ合わせると、未知データではなく採点データに過適合します。Round 2は、一つの仮説を試すために使います。</span></div>
+    </section>
+
+    <section class="score-section" id="submit" aria-labelledby="submit-title">
+      <div class="content-width">
+        <p class="section-label">SUBMIT</p>
+        <h2 id="submit-title">予測CSVを採点する</h2>
+        <p class="score-lead">好きなニックネームで公式提出すると、全員に同じランキングが表示されます。入力したニックネームは公開・保存されます。実名、学籍番号、メールアドレスはニックネームに入れないでください。アカウント連携はなく、予測CSVそのものも保存しません。</p>
+
+        <form id="score-form" class="score-form">
+          <label><span>公開ニックネーム</span><input id="team-name" name="team" maxlength="30" autocomplete="off" placeholder="例：Team Seagull"></label>
+          <label><span>授業コード</span><input id="class-code" name="class-code" type="password" maxlength="30" autocomplete="off" placeholder="教員の画面を確認"></label>
+          <label class="submission-source"><span>提出CSV（任意）</span><input id="submission-file" name="submission" type="file" accept=".csv,text/csv"><small id="generated-submission-status">問09を実行すると、ここから直接提出できます。ファイル選択は任意です。</small></label>
+          <button class="button score-button" id="score-button" type="submit">このCSVを公式提出する</button>
+        </form>
+
+        <div class="score-error" id="score-error" role="alert" hidden></div>
+        <div class="score-result" id="score-result" role="status" aria-live="polite" hidden>
+          <p data-score-team></p>
+          <strong data-score-value>0.000</strong>
+          <span>ACCURACY</span>
+          <p data-score-detail></p>
+          <small>receipt <code data-score-code></code></small>
+        </div>
+        <button class="button button--quiet copy-receipt" id="copy-receipt" type="button" hidden>結果票をコピー</button>
+
+        <div class="shared-board-preview">
+          <div class="shared-board-heading">
+            <div><h3>公開ランキング</h3><p id="shared-leaderboard-status" aria-live="polite">読み込み中…</p></div>
+            <div><button class="button button--quiet" id="refresh-shared-leaderboard" type="button">更新</button><a class="button button--quiet" href="leaderboard.html">全画面で見る</a></div>
+          </div>
+          <div class="leaderboard-card shared-board-card">
+            <p id="shared-leaderboard-empty">まだ公式提出がありません。</p>
+            <div class="table-scroll"><table>
+              <thead><tr><th>Rank</th><th>Nickname</th><th>Best round</th><th>Score</th><th>Receipt</th></tr></thead>
+              <tbody id="shared-leaderboard-body"></tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept-section content-width" aria-labelledby="github-end-title">
+      <p class="section-label">FROM PIPELINE TO GITHUB</p>
+      <h2 id="github-end-title">変更したコードより、変更した理由を残す</h2>
+      <div class="commit-example">
+        <span>弱い記録</span><code>Update analysis</code>
+        <span>読める記録</span><code>Add Fare after comparing ticket classes</code>
+      </div>
+      <p>教員がこの変更をcommitし、diffとhistoryを投影します。GitHubは完成品の置き場ではなく、pipelineの判断を第三者がたどれる形にする道具です。</p>
+      <div class="warning-card"><strong>今日はGitHub登録もpushも不要</strong><span>公開repoはアカウントなしで閲覧できます。採点に使うニックネームもGitHubアカウントとは無関係です。学生自身の登録・clone・pushは、準備時間を取れる別の回に行います。</span></div>
+      <div class="download-row"><a class="button button--quiet" href="https://github.com/JunGoto01/DSC3010J-lecture03">授業用の公開repoを見る</a><a class="button button--quiet" href="leaderboard.html">みんなの公開ランキング</a></div>
+    </section>
+
+    <section class="final-section">
+      <div class="content-width">
+        <p class="section-label">EXIT TICKET</p>
+        <h2>今日のscoreだけでは分からないものは何か</h2>
+        <ol>
+          <li>Round 2で何を、なぜ変えたか</li>
+          <li>scoreはどう変わったか</li>
+          <li>予測を改善するため、乗客表の外から何を知りたいか</li>
+        </ol>
+        <p class="final-message">データに入っていない仕組みは、回帰を何度回しても直接は見えません。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="content-width"><span>後藤 潤 · GRIPS</span><span>DSC3010J · 第3回</span></div></footer>
+
+  <script type="text/plain" id="global-setup"></script>
+  <script src="competition-data.js?v=20260827-beginner1"></script>
+  <script src="api-config.js?v=20260827-beginner1"></script>
+  <script src="competition-api.js?v=20260827-beginner1"></script>
+  <script src="app.js?v=20260827-beginner1"></script>
+  <script src="scoring.js?v=20260827-beginner1"></script>
+</body>
+</html>
