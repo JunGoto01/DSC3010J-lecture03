@@ -3188,6 +3188,8 @@ footer > .content-width {
   text-align: left;
 }
 
+.model-group-table--simple { min-width: 420px; }
+
 .model-group-table th:nth-child(n + 3),
 .model-group-table td:nth-child(n + 3) { text-align: right; }
 
@@ -3775,6 +3777,14 @@ footer > .content-width {
 }
 
 .learning-goals li + li { margin-top: 4px; }
+
+.learning-goals__note {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
 
 .r-basics,
 .range-comparison,
