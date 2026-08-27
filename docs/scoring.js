@@ -33,20 +33,20 @@ async function scoreSubmission(event) {
   const classCode = classCodeInput.value.trim();
   const generatedCsv = window.DSC3010J_GENERATED_SUBMISSION_CSV || "";
   if (alias.length < 1 || [...alias].length > 30) {
-    showScoreError("公開ニックネームを1〜30文字で入力してください。実名・学籍番号・メールは使いません。");
+    showScoreError("公開ニックネームを1〜30文字で入力すること。実名・学籍番号・メールは使わない。");
     return;
   }
   if (!classCode) {
-    showScoreError("教員が投影している授業コードを入力してください。");
+    showScoreError("教員が投影している授業コードを入力すること。");
     return;
   }
   if (!generatedCsv) {
-    showScoreError("先にSTEP 1、STEP 2、STEP 3を順番に実行してください。STEP 3が終わると、提出用の答案が自動で作られます。");
+    showScoreError("先にSTEP 1、STEP 2、STEP 3を順番に実行すること。STEP 3が終わると、提出用の答案が自動で作られる。");
     return;
   }
 
   scoreButton.disabled = true;
-  scoreButton.textContent = "採点サーバーへ提出しています…";
+  scoreButton.textContent = "採点サーバーへ提出中…";
   try {
     const predictions = parseSubmission(generatedCsv);
     const fingerprint = await makeFingerprint(alias, predictions);
@@ -78,48 +78,48 @@ async function scoreSubmission(event) {
 function updateSubmissionSourceStatus() {
   if (!generatedSubmissionStatus) return;
   if (window.DSC3010J_GENERATED_SUBMISSION_CSV) {
-    generatedSubmissionStatus.textContent = "270人分の予測答案ができています。このまま採点できます。";
+    generatedSubmissionStatus.textContent = "270人分の予測答案ができている。このまま採点できる。";
     generatedSubmissionStatus.dataset.ready = "true";
     scoreButton.disabled = false;
     scoreButton.textContent = "予測答案を提出して採点する";
   } else {
-    generatedSubmissionStatus.textContent = "STEP 3を実行すると、270人分の提出用答案がここに用意されます。";
+    generatedSubmissionStatus.textContent = "STEP 3を実行すると、270人分の提出用答案がここに用意される。";
     generatedSubmissionStatus.dataset.ready = "false";
     scoreButton.disabled = true;
-    scoreButton.textContent = "STEP 3の実行後に提出できます";
+    scoreButton.textContent = "STEP 3の実行後に提出できる";
   }
 }
 
 function parseSubmission(rawText) {
   const text = rawText.replace(/^\uFEFF/, "").trim();
-  if (!text) throw new Error("提出用の答案が空です。STEP 3をもう一度実行してください。");
+  if (!text) throw new Error("提出用の答案が空。STEP 3をもう一度実行すること。");
 
   const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
   const header = lines.shift()?.split(",").map((value) => value.trim().replace(/^"|"$/g, ""));
   if (!header || header.length !== 2 || header[0] !== "PassengerId" || header[1] !== "Survived") {
-    throw new Error("提出用答案を正しく組み立てられませんでした。ページを再読み込みし、STEP 1から実行してください。");
+    throw new Error("提出用答案を正しく組み立てられなかった。ページを再読み込みし、STEP 1から実行すること。");
   }
 
   const rows = lines.map((line, index) => {
     const fields = line.split(",").map((value) => value.trim().replace(/^"|"$/g, ""));
-    if (fields.length !== 2) throw new Error(`提出用答案の${index + 2}行目を正しく読み取れませんでした。`);
+    if (fields.length !== 2) throw new Error(`提出用答案の${index + 2}行目を正しく読み取れなかった。`);
     const passengerId = Number(fields[0]);
     const survived = Number(fields[1]);
-    if (!Number.isInteger(passengerId)) throw new Error(`提出用答案の${index + 2}行目に照合番号がありません。`);
+    if (!Number.isInteger(passengerId)) throw new Error(`提出用答案の${index + 2}行目に照合番号がない。`);
     if (!Number.isInteger(survived) || ![0, 1].includes(survived)) {
-      throw new Error(`提出用答案の${index + 2}行目が0または1になっていません。STEP 3を確認してください。`);
+      throw new Error(`提出用答案の${index + 2}行目が0または1になっていない。STEP 3を確認すること。`);
     }
     return { passengerId, survived };
   });
 
   if (rows.length !== competition.expectedRows) {
-    throw new Error(`予測は${competition.expectedRows}人分必要ですが、現在は${rows.length}人分です。STEP 2から実行し直してください。`);
+    throw new Error(`予測は${competition.expectedRows}人分必要だが、現在は${rows.length}人分しかない。STEP 2から実行し直すこと。`);
   }
   const ids = rows.map((row) => row.passengerId);
-  if (new Set(ids).size !== ids.length) throw new Error("提出用答案の照合番号が重複しています。ページを再読み込みしてください。");
+  if (new Set(ids).size !== ids.length) throw new Error("提出用答案の照合番号が重複している。ページを再読み込みすること。");
   const expected = new Set(competition.challengeIds);
   if (ids.some((id) => !expected.has(id)) || competition.challengeIds.some((id) => !ids.includes(id))) {
-    throw new Error("提出用答案とchallengeの行が一致しません。ページを再読み込みし、STEP 1から実行してください。");
+    throw new Error("提出用答案とchallengeの行が一致しない。ページを再読み込みし、STEP 1から実行すること。");
   }
   return rows;
 }
@@ -145,7 +145,7 @@ function showScore(entry) {
   scoreResult.querySelector("[data-score-value]").textContent = entry.score.toFixed(3);
   scoreResult.querySelector("[data-score-detail]").textContent =
     `${entry.total}人中${entry.correct}人を正しく予測。多数派だけの基準点 ${competition.baselineAccuracy.toFixed(3)} に対して ${direction}${difference.toFixed(3)}。` +
-    (entry.idempotent ? " 同じ通信の再送だったため、提出回数は増えていません。" : "");
+    (entry.idempotent ? " 同じ通信の再送だったため、提出回数は増えていない。" : "");
   scoreResult.querySelector("[data-score-code]").textContent = entry.receipt;
   latestReceipt = `${entry.alias} | Round ${entry.round} | score=${entry.score.toFixed(3)} | ${entry.correct}/${entry.total} | receipt=${entry.receipt}`;
   copyReceiptButton.hidden = false;
@@ -169,7 +169,7 @@ async function refreshLeaderboard() {
   if (leaderboardLoading || !sharedBoardBody) return;
   leaderboardLoading = true;
   refreshBoardButton && (refreshBoardButton.disabled = true);
-  sharedBoardStatus.textContent = "公開ランキングを更新しています…";
+  sharedBoardStatus.textContent = "公開ランキングを更新中…";
   try {
     const result = await competitionApi.getLeaderboard();
     renderLeaderboard(result.leaderboard || []);
@@ -200,7 +200,7 @@ function renderLeaderboard(entries) {
 async function copyReceipt() {
   if (!latestReceipt) return;
   await navigator.clipboard.writeText(latestReceipt);
-  copyReceiptButton.textContent = "結果票をコピーしました";
+  copyReceiptButton.textContent = "結果票をコピーした";
   window.setTimeout(() => { copyReceiptButton.textContent = "結果票をコピー"; }, 1400);
 }
 

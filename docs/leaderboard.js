@@ -18,7 +18,7 @@ async function refreshBoard() {
   if (loading) return;
   loading = true;
   refreshBoardButton.disabled = true;
-  boardStatus.textContent = "ランキングを更新しています…";
+  boardStatus.textContent = "ランキングを更新中…";
   try {
     const result = await publicBoardApi.getLeaderboard();
     latestEntries = Array.isArray(result.leaderboard) ? result.leaderboard : [];

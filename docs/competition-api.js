@@ -10,9 +10,9 @@
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body: JSON.stringify(payload)
     });
-    if (!response.ok) throw new Error(`採点サーバーへ接続できませんでした（HTTP ${response.status}）。`);
+    if (!response.ok) throw new Error(`採点サーバーへ接続できなかった（HTTP ${response.status}）。`);
     const result = await response.json();
-    if (!result?.ok) throw new Error(result?.error?.message || "採点サーバーでエラーが発生しました。");
+    if (!result?.ok) throw new Error(result?.error?.message || "採点サーバーでエラーが発生した。");
     return result;
   }
 
@@ -20,7 +20,7 @@
     return new Promise((resolve, reject) => {
       const callback = `dsc3010j_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
       const script = document.createElement("script");
-      const timeout = window.setTimeout(() => finish(new Error("ランキングの取得がタイムアウトしました。")), 12000);
+      const timeout = window.setTimeout(() => finish(new Error("ランキングの取得がタイムアウトした。")), 12000);
 
       function cleanup() {
         window.clearTimeout(timeout);
@@ -35,10 +35,10 @@
       }
 
       window[callback] = (result) => {
-        if (!result?.ok) finish(new Error(result?.error?.message || "ランキングを取得できませんでした。"));
+        if (!result?.ok) finish(new Error(result?.error?.message || "ランキングを取得できなかった。"));
         else finish(null, result);
       };
-      script.onerror = () => finish(new Error("ランキングサーバーへ接続できませんでした。"));
+      script.onerror = () => finish(new Error("ランキングサーバーへ接続できなかった。"));
       script.src = `${config.endpoint}?action=leaderboard&callback=${encodeURIComponent(callback)}&_=${Date.now()}`;
       document.head.append(script);
     });

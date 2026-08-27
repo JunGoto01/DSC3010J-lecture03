@@ -58,7 +58,7 @@ for (const cell of cells) {
 
 restartButton.addEventListener("click", () => {
   const confirmed = window.confirm(
-    "このタブ内のコード編集、実行結果、R object、提出答案を消して、最初の状態に戻します。よろしいですか。"
+    "このタブ内のコード編集、実行結果、R object、提出答案を消して、最初の状態に戻す。実行するか？"
   );
   if (confirmed) window.location.reload();
 });
@@ -70,16 +70,16 @@ initializeWebR();
 
 async function initializeWebR() {
   if (window.location.protocol === "file:") {
-    setRuntimeError("このファイルは直接開けません", "授業用のURLからページを開いてください");
+    setRuntimeError("このファイルは直接開けない", "授業用のURLからページを開くこと");
     return;
   }
 
   try {
-    setRuntimeLoading("R本体をダウンロードしています", "初回は30秒から1分ほどかかります");
+    setRuntimeLoading("R本体をダウンロード中", "初回は30秒から1分ほどかかる");
     const { WebR } = await import(WEBR_MODULE_URL);
     webR = new WebR({ baseUrl: WEBR_BASE_URL });
 
-    setRuntimeLoading("Rを起動しています", "このページを閉じずにお待ちください");
+    setRuntimeLoading("Rを起動中", "このページを閉じないこと");
     await webR.init();
     await installDataFile("data/titanic_train.csv", "/home/web_user/titanic_train.csv");
     await installDataFile("data/titanic_challenge.csv", "/home/web_user/titanic_challenge.csv");
@@ -91,8 +91,8 @@ async function initializeWebR() {
   } catch (error) {
     console.error(error);
     setRuntimeError(
-      "Rを起動できませんでした",
-      "通信を確認してページを再読み込みしてください。直らない場合はChromeまたはFirefoxで開いてください"
+      "Rを起動できなかった",
+      "通信を確認してページを再読み込み。直らない場合はChromeまたはFirefoxで開くこと"
     );
   }
 }
@@ -121,7 +121,7 @@ async function runCell(cell) {
   const cellIndex = cells.indexOf(cell);
 
   if (!code) {
-    showCellError(cell, "コードが空欄です。「元のコードに戻す」を押すと、最初のコードが戻ります。");
+    showCellError(cell, "コードが空欄。「元のコードに戻す」を押すと、最初のコードが戻る。");
     return;
   }
 
@@ -135,9 +135,9 @@ async function runCell(cell) {
   button.textContent = "実行中…";
   outputBox.hidden = false;
   textOutput.classList.remove("is-error");
-  textOutput.textContent = "Rが計算しています…";
+  textOutput.textContent = "Rが計算中…";
   plotOutput.replaceChildren();
-  setRuntimeLoading("コードを実行しています", `STEP ${cell.dataset.cellId}までを上から計算しています`);
+  setRuntimeLoading("コードを実行中", `STEP ${cell.dataset.cellId}までを上から計算中`);
 
   let shelter = null;
   try {
@@ -145,11 +145,11 @@ async function runCell(cell) {
 
     for (const previousCell of cells.slice(0, cellIndex)) {
       const previousCode = previousCell.querySelector("textarea").value.trim();
-      if (!previousCode) throw new Error(`STEP ${previousCell.dataset.cellId}のコードが空欄です。`);
+      if (!previousCode) throw new Error(`STEP ${previousCell.dataset.cellId}のコードが空欄。`);
       try {
         await webR.evalRVoid(previousCode);
       } catch (error) {
-        throw new Error(`STEP ${previousCell.dataset.cellId}を再実行できませんでした。\n${friendlyError(error)}`);
+        throw new Error(`STEP ${previousCell.dataset.cellId}を再実行できなかった。\n${friendlyError(error)}`);
       }
     }
 
@@ -174,11 +174,11 @@ async function runCell(cell) {
     const lines = capture.output.map((entry) => formatOutputEntry(entry));
     const printed = lines.join("\n").replace(/\s+$/, "");
     if (capture.output.some((entry) => entry.type === "stderr")) {
-      throw new Error(printed || "Rがコードを実行できませんでした。");
+      throw new Error(printed || "Rがコードを実行できなかった。");
     }
 
     await validateRequiredObject(cell.dataset.cellId);
-    textOutput.textContent = printed || "（objectを保存しました）";
+    textOutput.textContent = printed || "（objectを保存した）";
     textOutput.classList.toggle("is-error", capture.output.some((entry) => entry.type === "warning"));
 
     for (const image of capture.images) {
@@ -214,9 +214,9 @@ async function runCell(cell) {
 
 async function validateRequiredObject(cellId) {
   const checks = {
-    "01": `if (!exists("model") || !inherits(model, "glm")) stop("modelが作られていません。model <- glm(...) の行を確認してください。")`,
-    "02": `if (!exists("probability") || length(probability) != nrow(challenge)) stop("270人分のprobabilityが作られていません。probability <- predict(...) の行を確認してください。")`,
-    "03": `if (!exists("prediction") || length(prediction) != nrow(challenge) || any(!prediction %in% c(0, 1))) stop("270人分の0/1 predictionが作られていません。ifelse(...) の行を確認してください。")`
+    "01": `if (!exists("model") || !inherits(model, "glm")) stop("modelが作られていない。model <- glm(...) の行を確認。")`,
+    "02": `if (!exists("probability") || length(probability) != nrow(challenge)) stop("270人分のprobabilityが作られていない。probability <- predict(...) の行を確認。")`,
+    "03": `if (!exists("prediction") || length(prediction) != nrow(challenge) || any(!prediction %in% c(0, 1))) stop("270人分の0/1 predictionが作られていない。ifelse(...) の行を確認。")`
   };
   await webR.evalRVoid(checks[cellId]);
 }
@@ -243,7 +243,7 @@ async function buildSubmissionAutomatically() {
 
 async function installDataFile(url, destination) {
   const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) throw new Error(`教材データを取得できませんでした（${response.status}）`);
+  if (!response.ok) throw new Error(`データを取得できなかった（${response.status}）`);
   await webR.FS.writeFile(destination, new Uint8Array(await response.arrayBuffer()));
 }
 
@@ -254,8 +254,8 @@ function downloadCurrentScript() {
   }).join("");
 
   const script = `# DSC3010J 第3回：ロジスティック回帰pipeline
-# Webページの三つのコード欄を、一本のRスクリプトにまとめた保存版です。
-# インターネット接続があれば、このファイル単体でデータを読み込めます。
+# Webページの三つのコード欄を、一本のRスクリプトにまとめた保存版。
+# インターネット接続があれば、このファイル単体でデータを読み込める。
 
 # ページが自動で行っていたデータ読込
 train <- read.csv(
@@ -270,7 +270,7 @@ ${codeSections}
 
 
 # ページが自動で行っていた提出答案の作成 ------------------------------
-# PassengerIdは採点用の番号で、回帰式には使いません。
+# PassengerIdは採点用の番号で、回帰式には使わない。
 submission <- data.frame(
   PassengerId = challenge$PassengerId,
   Survived = as.integer(prediction)
@@ -280,7 +280,7 @@ write.csv(submission, "titanic_submission.csv", row.names = FALSE)
 
   downloadTextFile(script, "lecture03_logistic_pipeline.R", "text/plain;charset=utf-8");
   if (saveScriptStatus) {
-    saveScriptStatus.textContent = "lecture03_logistic_pipeline.R をダウンロードしました。";
+    saveScriptStatus.textContent = "lecture03_logistic_pipeline.R をダウンロードした。";
     window.setTimeout(() => { saveScriptStatus.textContent = ""; }, 3000);
   }
 }
@@ -295,13 +295,13 @@ async function downloadSubmission() {
     "text/csv;charset=utf-8",
     true
   );
-  downloadButton.textContent = "ダウンロードしました";
+  downloadButton.textContent = "ダウンロードした";
   window.setTimeout(() => {
     const ready = Boolean(window.DSC3010J_GENERATED_SUBMISSION_CSV);
     downloadButton.disabled = !ready;
     downloadButton.textContent = ready
       ? "現在の提出答案をもう一度ダウンロード"
-      : "STEP 3の実行後にダウンロードできます";
+      : "STEP 3の実行後にダウンロードできる";
   }, 1600);
 }
 
@@ -351,7 +351,7 @@ function resetGeneratedSubmission() {
   setGeneratedSubmission("");
   if (downloadButton) {
     downloadButton.disabled = true;
-    downloadButton.textContent = "STEP 3の実行後にダウンロードできます";
+    downloadButton.textContent = "STEP 3の実行後にダウンロードできる";
   }
 }
 
@@ -370,7 +370,7 @@ function renderSubmissionPreview(csv) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 2;
-    cell.textContent = "STEP 3を実行すると、ここに先頭6行が表示されます。";
+    cell.textContent = "STEP 3を実行すると、ここに先頭6行が表示される。";
     row.append(cell);
     submissionPreviewBody.append(row);
     return;
@@ -402,7 +402,7 @@ function showCellError(cell, message) {
 function friendlyError(error) {
   const raw = error instanceof Error ? error.message : String(error);
   const cleaned = raw.replace(/^Error:\s*/i, "").replace(/^WebAssembly error:\s*/i, "").trim();
-  return `${cleaned}\n\n名前のつづり、括弧、カンマを確認してください。直らない場合は「元のコードに戻す」を押してください。`;
+  return `${cleaned}\n\n名前のつづり、括弧、カンマを確認。直らない場合は「元のコードに戻す」を押すこと。`;
 }
 
 function formatOutputEntry(entry) {
@@ -448,8 +448,8 @@ function setRuntimeLoading(title, detail) {
 
 function setRuntimeReady() {
   statusDot.className = "status-dot status-dot--ready";
-  statusTitle.textContent = "Rの準備ができました";
-  statusDetail.textContent = "STEP 1から上の順に実行できます";
+  statusTitle.textContent = "Rの準備完了";
+  statusDetail.textContent = "STEP 1から上の順に実行できる";
 }
 
 function setRuntimeError(title, detail) {
