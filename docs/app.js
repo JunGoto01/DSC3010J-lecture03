@@ -11,6 +11,7 @@ const completedCount = document.getElementById("completed-count");
 const totalCount = document.getElementById("total-count");
 const progressFill = document.getElementById("progress-fill");
 const barProgressFill = document.getElementById("bar-progress-fill");
+const runtimeCompletedCount = document.getElementById("runtime-completed-count");
 const restartButton = document.getElementById("restart-button");
 const downloadButton = document.getElementById("download-submission");
 const saveScriptButton = document.getElementById("save-script-button");
@@ -156,7 +157,12 @@ async function runCell(cell) {
     const displayCode = {
       "01": "round(coef(model), 2)",
       "02": "round(head(probability), 3)",
-      "03": "head(prediction)"
+      "03": `{
+        cat("先頭6人の0/1\\n")
+        print(head(prediction))
+        cat("\\n270人の内訳\\n")
+        print(c("予測0" = sum(prediction == 0), "予測1" = sum(prediction == 1)))
+      }`
     }[cell.dataset.cellId];
     const capture = await shelter.captureR(`${code}\n\n# ページが結果確認のために実行する表示処理\n${displayCode}`, {
       withAutoprint: true,
@@ -429,6 +435,7 @@ function updateProgress() {
   const total = cells.length;
   const ratio = total === 0 ? 0 : (completed / total) * 100;
   completedCount.textContent = String(completed);
+  if (runtimeCompletedCount) runtimeCompletedCount.textContent = `${completed} / ${total}`;
   progressFill.style.width = `${ratio}%`;
   if (barProgressFill) barProgressFill.style.width = `${ratio}%`;
 }

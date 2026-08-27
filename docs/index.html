@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="タイタニックを題材にした授業用データコンペで、Rによる予測と提出までの流れを学ぶページ">
+  <meta name="description" content="タイタニックを題材に、データコンペ、回帰、ロジスティック回帰、Rでの予測、提出までを一つのページで学ぶ授業教材">
   <title>第3回｜タイタニックを題材にRでデータコンペ</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230d3159'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='white'%3ER%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260828-context1">
+  <link rel="stylesheet" href="styles.css?v=20260828-selfcontained1">
 </head>
 <body>
   <a class="skip-link" href="#main">本文へ移動</a>
@@ -15,8 +15,8 @@
     <div class="hero__inner">
       <p class="eyebrow">応用データサイエンス演習 · DSC3010J · 2026年度 夏学期</p>
       <h1>タイタニックを題材に、Rで予測を提出する</h1>
-      <p class="hero__lead">1912年のタイタニック号を題材にしたKaggleの入門課題を、授業用の架空データで小さく再現します。乗客情報から生存か非生存かを予測し、授業用ページへ提出してスコアを確かめます。</p>
-      <div class="hero__meta"><span>第3回</span><span>90分</span><span>ブラウザでRを実行</span><span>コードは3区画</span><span>提出は2回まで</span></div>
+      <p class="hero__lead">1912年のタイタニック号を題材にしたKaggleの入門課題を、授業用の架空データで小さく再現します。図解を読み、ブラウザでRを実行し、予測を提出して結果を考えるところまで、このページを上から順に進めます。</p>
+      <div class="hero__meta"><span>第3回</span><span>90分</span><span>このページで説明から提出まで完結</span><span>ブラウザでRを実行</span><span>コードは3区画</span><span>提出は2回まで</span></div>
     </div>
   </header>
 
@@ -26,12 +26,53 @@
         <span class="status-dot status-dot--loading" id="status-dot" aria-hidden="true"></span>
         <div><strong id="status-title">Rを準備中</strong><span id="status-detail">データを読み込んでいます</span></div>
       </div>
-      <button class="button button--quiet" id="restart-button" type="button">最初の状態に戻す</button>
+      <div class="runtime-actions"><span class="runtime-progress-label">R実行 <b id="runtime-completed-count">0 / 3</b></span><a class="runtime-map-link" href="#navigator-title">章一覧</a><button class="button button--quiet" id="restart-button" type="button">最初の状態に戻す</button></div>
     </div>
     <div class="runtime-bar__progress" aria-hidden="true"><i id="bar-progress-fill"></i></div>
   </div>
 
   <main id="main">
+    <nav class="lesson-navigator content-width" aria-labelledby="navigator-title">
+      <div class="lesson-navigator__intro">
+        <p class="section-label">START HERE</p>
+        <h2 id="navigator-title">説明を読み、図で確かめ、同じページでRを動かす</h2>
+        <p>別の資料を行き来する必要はありません。以下の七つの章を上から進めると、データ分析の問いから提出後の振り返りまでが一続きになります。</p>
+      </div>
+      <ol>
+        <li><a href="#story-title"><span>01</span><strong>題材を知る</strong><small>タイタニックとKaggle</small></a></li>
+        <li><a href="#data-first-title"><span>02</span><strong>表を読む</strong><small>trainとchallenge</small></a></li>
+        <li><a href="#workspace-title"><span>03</span><strong>画面を知る</strong><small>Rの記号と保存先</small></a></li>
+        <li><a href="#model-primer-title"><span>04</span><strong>規則を理解</strong><small>回帰と確率</small></a></li>
+        <li><a href="#c01-title"><span>05</span><strong>Rを実行</strong><small>三つのコード区画</small></a></li>
+        <li><a href="#submit-title"><span>06</span><strong>予測を提出</strong><small>Accuracyとランキング</small></a></li>
+        <li><a href="#reflection-title"><span>07</span><strong>結果を考える</strong><small>表にない情報</small></a></li>
+      </ol>
+      <div class="learning-goals">
+        <strong>このページを終えたときに説明できること</strong>
+        <ul>
+          <li>trainとchallengeを、何のために分けて使うのか</li>
+          <li>生存確率、提出用の0/1、全体の正解率（Accuracy）はどう違うのか</li>
+          <li>予測規則（<code>model</code>）→ 生存確率（<code>probability</code>）→ 提出用0/1（<code>prediction</code>）が、どの順番で作られるのか</li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="pipeline-overview content-width" aria-labelledby="pipeline-title">
+      <p class="section-label">90-MINUTE MAP</p>
+      <h2 id="pipeline-title">表を見るところから、提出結果を読むところまで</h2>
+      <ol class="class-route">
+        <li><time>0–12分</time><strong>タイタニックとデータコンペ</strong><span>題材、Kaggle、提出と採点の仕組みを知る</span></li>
+        <li><time>12–25分</time><strong>二つの表と予測問題</strong><span>trainとchallengeの実際の行を見る</span></li>
+        <li><time>25–35分</time><strong>画面とRの作業スペース</strong><span>三つのコード欄、object、保存先を確認</span></li>
+        <li><time>35–57分</time><strong>回帰とロジスティック回帰</strong><span>直線、S字、確率、規則の学び方を図で理解</span></li>
+        <li><time>57–65分</time><strong>STEP 1</strong><span>trainから予測規則を作る</span></li>
+        <li><time>65–72分</time><strong>STEP 2</strong><span>challengeの確率を出す</span></li>
+        <li><time>72–79分</time><strong>STEP 3</strong><span>確率を0/1へ変え、答案を自動作成</span></li>
+        <li><time>79–88分</time><strong>2回の提出</strong><span>最初の結果と、境界を変えた結果を比較</span></li>
+        <li><time>88–90分</time><strong>振り返り</strong><span>表にない情報について考える</span></li>
+      </ol>
+    </section>
+
     <section class="beginner-start content-width" aria-labelledby="story-title">
       <p class="section-label">TODAY'S STORY</p>
       <h2 id="story-title">タイタニック号の乗客データが、なぜ予測課題になるのか</h2>
@@ -41,6 +82,7 @@
         <article><span>2</span><h3>KaggleのTitanic課題</h3><p><strong>Kaggle</strong>は、データと予測問題が公開され、参加者が予測を提出してスコアやランキングを確認できるWebサービスです。入門課題の一つでは、乗客情報から生存・非生存を予測します。</p></article>
         <article><span>3</span><h3>この授業での再現</h3><p>KaggleのWebサイトへは提出せず、この授業用ページを使います。Rで予測を作り、ニックネームで提出し、同じ授業の参加者と結果を比べます。</p></article>
       </div>
+      <div class="takeaway"><strong>乗客についての記録と生存結果を組み合わせると、予測問題になります</strong><span>客室等級や性別などの情報と、実際に生存したかどうかを一緒に見ることで、「どのような情報から生存を予測できるか」というデータ分析の問いを作れます。</span></div>
       <p class="context-source">実際の課題：<a href="https://www.kaggle.com/competitions/titanic" target="_blank" rel="noreferrer">Kaggle「Titanic - Machine Learning from Disaster」</a></p>
     </section>
 
@@ -62,7 +104,7 @@
         <article><span>3　Webサイトへ送る</span><strong>予測を提出</strong><p>正解を見ることなく、一人ずつの予測答案を送る</p></article><i aria-hidden="true">→</i>
         <article><span>4　同じ基準で返る</span><strong>スコアと順位</strong><p>隠してある正解と照合され、結果を改善する手がかりが返る</p></article>
       </div>
-      <div class="accuracy-explained"><strong>この授業用ページが、Kaggleの役割を小さく再現します</strong><p>KaggleやGitHubのアカウントは使いません。ブラウザでRを実行し、作った予測をこのページから提出すると、Accuracyと公開ニックネームのランキングが表示されます。</p></div>
+      <div class="accuracy-explained"><strong>この授業用ページが、Kaggleの役割を小さく再現します</strong><p>KaggleやGitHubのアカウントは使いません。ブラウザでRを実行し、作った予測をこのページから提出すると、正解率（Accuracy）と公開ニックネームのランキングが表示されます。Accuracyは0から1の間で、1なら270人全員について0/1が一致し、大きいほど一致した人数が多いことを表します。</p></div>
     </section>
 
     <section class="question-intro content-width" aria-labelledby="question-title">
@@ -79,7 +121,7 @@
     <section class="data-first content-width" aria-labelledby="data-first-title">
       <p class="section-label">LOOK AT THE ROWS</p>
       <h2 id="data-first-title">分析に使う列を、上から6人だけ見る</h2>
-      <p>CSVから今回使う列だけを抜き出した表示です。表の横一行が乗客一人です。trainには結果を表す<code>Survived</code>列があります。challengeのCSVにはこの列がないため、下の画面では「これから予測する場所」を<code>?</code>で補って示します。</p>
+      <p><strong>CSV</strong>は、表を行と列の形で保存するファイル形式です。このページは二つのCSVをすでに読み込んでいます。下は今回使う列だけを抜き出した表示で、表の横一行が乗客一人です。trainには結果を表す<code>Survived</code>列があります。challengeのCSVにはこの列がないため、下の画面では「これから予測する場所」を<code>?</code>で補って示します。</p>
       <div class="data-preview-grid">
         <article class="data-preview-card data-preview-card--train">
           <div class="data-preview-card__head"><div><span>規則を作る表</span><h3>train（630人）</h3></div><strong>正解あり</strong></div>
@@ -112,6 +154,8 @@
           <p>この<code>?</code>は説明のために画面へ加えた記号です。Rは270人分の0/1を予測し、採点サーバーだけが持つ正解と比べます。</p>
         </article>
       </div>
+      <div class="takeaway"><strong>同じ手がかりでも、生存した人と非生存の人がいます</strong><span>trainの1〜3行目はすべて3等・maleですが、結果には1と0の両方があります。客室等級と性別だけで個人の結果を完全には決められないため、Rは「必ず1」と断定するのではなく、共通する傾向を確率としてまとめます。</span></div>
+      <details class="knowledge-check"><summary>確認：いま見えているPclassとSexだけで、trainの1〜3行目を別々に予測できますか</summary><p><strong>できません。</strong>三人とも3等・maleなので、この二列だけを使う同じ規則からは同じ確率が出ます。それでも結果は1、0、0と異なるため、表に記録されていない違いがある可能性を考える必要があります。</p></details>
       <div class="minimal-dictionary">
         <article><code>Pclass</code><strong>客室等級</strong><p>1＝1等、2＝2等、3＝3等。予測に使います。</p></article>
         <article><code>Sex</code><strong>性別カテゴリー</strong><p><code>female</code>または<code>male</code>。予測に使います。</p></article>
@@ -140,6 +184,18 @@
       <p class="section-lead">三つの欄はすべて、ブラウザ内の同じR作業スペースを使います。上の欄で名前を付けて保存したものを、下の欄が使います。</p>
       <div class="explanation"><strong>objectは、Rのメモリに置いた「名前つきの中身」</strong><span>表、予測規則、270個の確率などに名前を付けると、後のコードからその名前で呼び出せます。<code>&lt;-</code>は、右側で作った中身を左側の名前へ保存する記号です。</span></div>
       <div class="explanation"><strong>実行ボタンを押すと、現在のコードを上からそのSTEPまで再計算します</strong><span>たとえばSTEP 2では、ページがデータを読み直し、区画1で<code>model</code>を作ってから、区画2で<code>probability</code>を作ります。上の区画を変更すると下の結果は無効になり、順番に実行し直します。</span></div>
+      <div class="r-basics" aria-labelledby="r-basics-title">
+        <h3 id="r-basics-title">コードを読むための、Rの六つの基本</h3>
+        <div>
+          <article><code># 説明</code><strong>コメント</strong><p><code>#</code>から行末までは人が読むメモです。Rは計算しません。</p></article>
+          <article><code>glm(...)</code><strong>関数</strong><p>名前の後の丸括弧は「この処理を行う」という意味です。括弧内に必要な指定を書きます。</p></article>
+          <article><code>data = train</code><strong>引数</strong><p>関数への指定です。カンマで区切ります。途中で改行しても、閉じ括弧までは一つの命令です。</p></article>
+          <article><code>model &lt;- ...</code><strong>保存</strong><p>右側で作った中身を、左側の名前を持つobjectとしてRのメモリへ置きます。</p></article>
+          <article><code>probability</code><strong>vector</strong><p>270個の確率を順番に並べたものです。1番目の値はchallengeの1行目に対応します。</p></article>
+          <article><code>"response"</code><strong>名前と文字</strong><p>Rは大文字・小文字を区別します。引用符は、選択肢の名前を文字として渡す印です。</p></article>
+        </div>
+      </div>
+      <div class="page-assisted-output"><strong>実行結果は、ページが確認用コードを加えて表示します</strong><p>objectへ保存するコードだけでは、通常は内容が自動表示されません。このページは学習しやすいように、STEP 1では係数、STEP 2では先頭6人の確率、STEP 3では先頭6人の0/1と全270人の内訳を表示する短いコードを実行後に加えます。これは画面表示だけを助け、作ったobjectの内容は変えません。</p></div>
       <figure class="workspace-flow" aria-labelledby="workspace-caption">
         <ol>
           <li class="workspace-flow__prepared"><span>ページが準備</span><strong><code>train</code><br><code>challenge</code></strong><small>CSVから読み込んだ二つの表</small></li>
@@ -164,28 +220,13 @@
         <div class="progress-panel__labels"><span>実行済みのコード区画</span><strong><span id="completed-count">0</span> / <span id="total-count">3</span></strong></div>
         <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
-    </section>
-
-    <section class="pipeline-overview content-width" aria-labelledby="pipeline-title">
-      <p class="section-label">90-MINUTE MAP</p>
-      <h2 id="pipeline-title">表を見るところから、提出結果を読むところまで</h2>
-      <ol class="class-route">
-        <li><time>0–12分</time><strong>タイタニックとデータコンペ</strong><span>題材、Kaggle、提出と採点の仕組みを知る</span></li>
-        <li><time>12–25分</time><strong>二つの表と予測問題</strong><span>trainとchallengeの実際の行を見る</span></li>
-        <li><time>25–35分</time><strong>画面とRの作業スペース</strong><span>三つのコード欄、object、保存先を確認</span></li>
-        <li><time>35–57分</time><strong>回帰とロジスティック回帰</strong><span>直線、S字、確率、規則の学び方を図で理解</span></li>
-        <li><time>57–65分</time><strong>STEP 1</strong><span>trainから予測規則を作る</span></li>
-        <li><time>65–72分</time><strong>STEP 2</strong><span>challengeの確率を出す</span></li>
-        <li><time>72–79分</time><strong>STEP 3</strong><span>確率を0/1へ変え、答案を自動作成</span></li>
-        <li><time>79–88分</time><strong>2回の提出</strong><span>最初の結果と、境界を変えた結果を比較</span></li>
-        <li><time>88–90分</time><strong>振り返り</strong><span>表にない情報について考える</span></li>
-      </ol>
+      <div class="button-state-note"><strong>灰色の実行ボタンは、故障ではありません</strong><span>前のSTEPがまだ終わっていない印です。STEP 1が終わるとSTEP 2、STEP 2が終わるとSTEP 3のボタンが押せるようになります。</span></div>
     </section>
 
     <section class="model-primer content-width" aria-labelledby="model-primer-title">
       <p class="section-label">REGRESSION → LOGISTIC REGRESSION</p>
       <h2 id="model-primer-title">回帰は、全員に使う一つの予測規則を作る</h2>
-      <p class="model-primer__lead">一人ずつ別の規則を暗記するのではなく、データ全体に見られる関係を少数の数字にまとめます。その数字を<strong>係数</strong>と呼びます。</p>
+      <p class="model-primer__lead">一人ずつ別の規則を暗記するのではなく、データ全体に見られる関係を少数の数字にまとめます。その数字を<strong>係数</strong>と呼びます。ここでは「各手がかりが点数をどれだけ動かすかを表す重み」と同じ意味です。</p>
       <div class="model-panels">
         <article class="model-panel">
           <h3>普通の回帰：数値を直線で予測する</h3>
@@ -193,10 +234,10 @@
             <title id="linear-title">点の中央を通る回帰直線</title><desc id="linear-desc">横軸の値が大きくなるにつれて縦軸の予測値が上がる直線と、その周囲にばらつく観測点です。</desc>
             <line class="chart-axis" x1="52" y1="218" x2="372" y2="218"/><line class="chart-axis" x1="52" y1="218" x2="52" y2="29"/><line class="linear-line" x1="72" y1="196" x2="355" y2="49"/>
             <circle class="data-point" cx="85" cy="183" r="6"/><circle class="data-point" cx="116" cy="174" r="6"/><circle class="data-point" cx="145" cy="137" r="6"/><circle class="data-point" cx="180" cy="152" r="6"/><circle class="data-point" cx="215" cy="104" r="6"/><circle class="data-point" cx="253" cy="117" r="6"/><circle class="data-point" cx="292" cy="72" r="6"/><circle class="data-point" cx="338" cy="63" r="6"/>
-            <text class="chart-label" x="172" y="252">手がかり x</text><text class="chart-label chart-label--y" x="16" y="34">予測する数値 y</text>
+            <text class="chart-rule-label" x="224" y="82">全員に使う直線</text><text class="chart-label" x="155" y="252">勉強時間 x</text><text class="chart-label chart-label--y" x="16" y="34">試験の点数 y</text>
           </svg>
           <div class="model-equation"><var>ŷ</var> = <var>a</var> + <var>b</var> × <var>x</var></div>
-          <p><var>a</var>は直線の出発点、<var>b</var>は傾きです。答えが試験点などの連続した数値なら、直線上の値をそのまま予測に使えます。</p>
+          <p><var>ŷ</var>は予測する試験点、<var>a</var>は直線の出発点、<var>b</var>は勉強時間が1増えたときの傾きです。答えが点数のように連続した数値なら、直線上の値をそのまま予測に使えます。</p>
         </article>
         <article class="model-panel model-panel--logistic">
           <h3>ロジスティック回帰：0/1を確率で予測する</h3>
@@ -206,8 +247,38 @@
             <text class="chart-label" x="19" y="36">1.0</text><text class="chart-label" x="19" y="129">0.5</text><text class="chart-label" x="26" y="222">0</text><text class="chart-label" x="161" y="252">生存しやすさの点数 z</text>
           </svg>
           <div class="model-equation model-equation--stack"><span><var>z</var> = <var>b</var><sub>0</sub> + <var>b</var><sub>1</sub> × 等級 + <var>b</var><sub>2</sub> × <code>male</code></span><span><var>p</var> = 1 ÷ (1 + <var>e</var><sup>−z</sup>)</span></div>
-          <p>式の中ではfemaleを<code>male = 0</code>、maleを<code>male = 1</code>として数値に直します。最初の式で手がかりを点数<var>z</var>へまとめ、S字の式で0〜1の確率<var>p</var>へ変えます。どんな点数でも確率は0未満や1より大きくなりません。</p>
+          <p>生存0/1へ普通の直線をそのまま使うと、予測が0未満や1より大きくなることがあります。そこで、まず手がかりを点数<var>z</var>へまとめ、S字の式で0〜1の確率<var>p</var>へ変えます。式の<var>e</var>はS字を作るための定数で、値を覚えたり手計算したりする必要はありません。femaleは<code>male = 0</code>、maleは<code>male = 1</code>として扱います。</p>
         </article>
+      </div>
+      <div class="range-comparison" aria-labelledby="range-comparison-title">
+        <h3 id="range-comparison-title">なぜ0/1の問題には、S字の変換が必要なのか</h3>
+        <div>
+          <article class="range-comparison__linear"><span>普通の直線</span><strong>−0.2　←　0　…　1　→　1.3</strong><p>直線はどこまでも伸びるため、「確率−0.2」や「確率1.3」のような解釈できない値を出せます。</p></article>
+          <article class="range-comparison__logistic"><span>ロジスティック回帰のS字</span><strong>0　≤　確率 <var>p</var>　≤　1</strong><p>どのような点数<var>z</var>でも0から1へ収められるため、生存しそうな程度を確率として読めます。</p></article>
+        </div>
+      </div>
+      <div class="equation-reader" aria-labelledby="equation-reader-title">
+        <h3 id="equation-reader-title">重み付き点数の式を、日常の言葉で読む</h3>
+        <p class="equation-reader__formula"><var>z</var> = <var>b</var><sub>0</sub> + <var>b</var><sub>1</sub> × <code>Pclass</code> + <var>b</var><sub>2</sub> × <code>male</code></p>
+        <div>
+          <article><code>b₀</code><strong>出発点</strong><p>どの乗客にも共通する基準の点数です。</p></article>
+          <article><code>b₁ × Pclass</code><strong>等級の分だけ動かす</strong><p>等級の数値に、trainから学ぶ重みを掛けます。掛け算は、この手がかりが点数をどれだけ動かすかを表します。</p></article>
+          <article><code>b₂ × male</code><strong>カテゴリーの差を加える</strong><p>femaleなら0、maleなら1です。0を掛ければ差は加わらず、1を掛ければ重みが一回分加わります。</p></article>
+          <article><code>b₀, b₁, b₂</code><strong>全員に同じ重み</strong><p>Rがtrainから決め、すべての乗客へ同じ値を使います。手で計算する必要はありません。</p></article>
+        </div>
+      </div>
+      <div class="training-feedback" aria-labelledby="training-feedback-title">
+        <h3 id="training-feedback-title">trainの一行が、規則を直す方向を教える</h3>
+        <p>仮の重みから確率を出し、trainにある既知の答えと比べます。次の0.40と0.70は、調整の考え方だけを示す仮の値です。</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>行</th><th>Pclass</th><th>Sex</th><th>既知の答え <var>y</var></th><th>仮の確率 <var>p</var></th><th>Rが見ること</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>3</td><td>male</td><td>1</td><td>0.40</td><td>答え1に対して低すぎる</td></tr>
+            <tr><td>2</td><td>3</td><td>male</td><td>0</td><td>0.40</td><td>答え0に近い方向</td></tr>
+            <tr><td>4</td><td>1</td><td>male</td><td>1</td><td>0.70</td><td>答え1に近い方向</td></tr>
+          </tbody>
+        </table></div>
+        <ul><li>答えが1なら、確率が1に近いほどよく合います。</li><li>答えが0なら、確率が0に近いほどよく合います。</li><li>1行だけでなく630人全体を見て、全体としてずれが小さくなるように重みを直します。</li></ul>
       </div>
       <div class="learning-loop" aria-label="trainから係数を学ぶ流れ">
         <h3>Rはtrainから、どのように係数を決めるのか</h3>
@@ -220,6 +291,20 @@
         </ol>
       </div>
       <div class="takeaway"><strong>trainの行を丸暗記するのではありません</strong><span>630個の答えを、全員へ共通に使える少数の係数へ圧縮します。challengeへは、この完成した係数を変えずに使います。</span></div>
+      <div class="worked-passenger" aria-labelledby="worked-passenger-title">
+        <p class="section-label">ONE PASSENGER, START TO FINISH</p>
+        <h3 id="worked-passenger-title">一人分を、乗客情報から提出用の0/1まで追う</h3>
+        <p>このあとRが学ぶ係数を使い、challengeの「3等・female」の一人を先にたどります。Rは同じ計算を270人へ行います。</p>
+        <ol>
+          <li><span>1　乗客情報</span><strong>3等・female</strong><p><code>Pclass = 3</code>、<code>male = 0</code></p></li>
+          <li><span>2　点数を計算</span><strong><var>z</var> ≈ 0.04</strong><p><code>2.59 − 0.85×3 − 0.93×0</code></p></li>
+          <li><span>3　S字で変換</span><strong><var>p</var> ≈ 0.509</strong><p>生存確率は約50.9%という見積もり</p></li>
+          <li><span>4　境界と比較</span><strong>0.5なら予測1</strong><p><code>0.509 ≥ 0.5</code>なので提出用分類は1</p></li>
+        </ol>
+        <div class="threshold-comparison"><article><span>境界 0.5</span><strong>0.509 ≥ 0.5 → 1</strong></article><article><span>境界 0.6</span><strong>0.509 &lt; 0.6 → 0</strong></article></div>
+        <div class="takeaway"><strong>0.509と1は、別の数字です</strong><span>0.509はmodelが見積もった確率です。1は、提出形式に合わせて境界0.5で分類した答えです。境界を0.6へ変えても確率は同じですが、提出用の0/1は変わります。</span></div>
+      </div>
+      <details class="knowledge-check"><summary>確認：同じ3等・femaleの人を、modelは別々の確率にできますか</summary><p><strong>できません。</strong>今回のmodelが使う手がかりは<code>Pclass</code>と<code>Sex</code>だけなので、二つが同じ人には同じ確率が出ます。表に入っていない違いは、このmodelからは見えません。</p></details>
     </section>
 
     <section class="part-heading" id="part-model"><div class="content-width"><p>R SCRIPT · 1 OF 3</p><h2>trainから規則を作る</h2><span>ここから三つのコード欄を上から実行します</span></div></section>
@@ -228,6 +313,7 @@
       <div class="lesson__body">
         <h2 id="c01-title">ロジスティック回帰の規則を<code>model</code>へ保存する</h2>
         <p><code>Survived ~ Pclass + Sex</code>は、「生存0/1を、客室等級と性別の二つで予測する」という指定です。</p>
+        <div class="step-brief"><article><span>すること</span><strong>STEP 1を実行</strong></article><article><span>見る場所</span><strong>三つの係数</strong></article><article><span>終わりの印</span><strong>STEP 2が押せる</strong></article></div>
         <div class="formula-reading" aria-label="Rのformulaの読み方"><code>Survived</code><span>を</span><code>~</code><span>次の手がかりで予測</span><code>Pclass + Sex</code><small><code>+</code>は二つの値を足す計算ではなく、「もう一つの手がかりも使う」という記号です。</small></div>
         <div class="r-cell" data-cell-id="01">
           <div class="r-cell__head"><span>一本のスクリプト：区画1</span><span>作るobject：model</span></div>
@@ -246,9 +332,10 @@ model &lt;- glm(
         <div class="code-argument-guide">
           <article><code>model &lt;-</code><p>完成した規則を<code>model</code>という名前でメモリへ保存</p></article>
           <article><code>data = train</code><p>係数を学ぶ材料は、正解を持つtrain</p></article>
-          <article><code>family = binomial()</code><p>答えが0/1なのでロジスティック回帰を使う指定</p></article>
+          <article><code>family = binomial()</code><p>答えが0/1なのでロジスティック回帰を使う指定。これ自体が確率を計算する関数ではありません。</p></article>
         </div>
-        <div class="learned-rule"><h3>このtrainから学ばれる規則</h3><p class="learned-rule__equation"><var>z</var> = 2.59 − 0.85 × <code>Pclass</code> − 0.93 × <code>male</code></p><ul><li><code>male</code>はfemaleなら0、maleなら1として式に入ります。</li><li>係数が負なので、Pclassの番号が大きい場合やmaleの場合、点数<var>z</var>は低くなります。</li><li>これはtrain内の関係を要約したもので、原因を証明する式ではありません。</li></ul></div>
+        <div class="output-reading" aria-labelledby="step1-output-title"><h3 id="step1-output-title">STEP 1の出力は、三つの係数</h3><p>実行ボタンを押すと、ページが<code>coef(model)</code>を使って係数を表示します。表示名を式と対応させると、次のように読めます。</p><div><article><code>(Intercept) 2.59</code><strong>出発点</strong><span>式の<var>b</var><sub>0</sub></span></article><article><code>Pclass −0.85</code><strong>等級が1増える差</strong><span>式の<var>b</var><sub>1</sub></span></article><article><code>Sexmale −0.93</code><strong>femaleに対するmaleの差</strong><span>式の<var>b</var><sub>2</sub></span></article></div></div>
+        <div class="learned-rule"><h3>このtrainから学ばれる規則</h3><p class="learned-rule__equation"><var>z</var> = 2.59 − 0.85 × <code>Pclass</code> − 0.93 × <code>male</code></p><ul><li><code>Sex</code>は文字カテゴリーですが、Rはfemaleを基準にしてmaleとの差を作ります。そのため出力名が<code>Sexmale</code>になります。</li><li><code>male</code>はfemaleなら0、maleなら1として式に入ります。</li><li><code>Pclass</code>を数値として使うため、この式は1等から2等への一段階と、2等から3等への一段階を同じ幅として扱います。</li><li>係数が負なので、Pclassの番号が大きい場合やmaleの場合、点数<var>z</var>は低くなります。</li><li>これはtrain内の関係を要約したもので、原因を証明する式ではありません。</li></ul></div>
         <div class="table-scroll"><table class="model-group-table">
           <caption>同じPclass・Sexには、同じ規則から同じ確率が出ます</caption>
           <thead><tr><th>Pclass</th><th>Sex</th><th>trainで実際に1だった割合</th><th>modelがまとめた確率</th></tr></thead>
@@ -257,7 +344,7 @@ model &lt;- glm(
             <tr><td>1</td><td>male</td><td>61 / 78 ＝ 78%</td><td>69%</td></tr><tr><td>2</td><td>male</td><td>31 / 103 ＝ 30%</td><td>49%</td></tr><tr><td>3</td><td>male</td><td>72 / 206 ＝ 35%</td><td>29%</td></tr>
           </tbody>
         </table></div>
-        <p class="table-note">modelの確率が各割合と完全には一致しないのは、六つの集団を別々に暗記せず、一つの共通式でまとめているためです。</p>
+        <p class="table-note">modelの確率が各割合と完全には一致しないのは、六つの集団を別々に暗記せず、一つの共通式でまとめているためです。同じPclass・Sexの人には同じ確率が出るので、同じ集団内の生存者と非生存者をこの二列だけで区別することはできません。</p>
       </div>
     </section>
 
@@ -267,6 +354,7 @@ model &lt;- glm(
       <div class="lesson__body">
         <h2 id="c02-title"><code>predict()</code>で270人分の確率を作る</h2>
         <p>STEP 1で保存した<code>model</code>を、challengeの各行へ使います。challengeの隠し正解は、この計算には入りません。</p>
+        <div class="step-brief"><article><span>すること</span><strong>STEP 2を実行</strong></article><article><span>見る場所</span><strong>先頭6人の確率</strong></article><article><span>終わりの印</span><strong>STEP 3が押せる</strong></article></div>
         <div class="r-cell" data-cell-id="02">
           <div class="r-cell__head"><span>一本のスクリプト：区画2</span><span>作るobject：probability</span></div>
           <textarea aria-label="STEP 2のRコード" spellcheck="false"># predict() で、保存済みmodelをchallengeへ使う
@@ -277,11 +365,12 @@ probability &lt;- predict(
   type = "response"
 )
 
-# 実行後、ページが先頭6人分を見やすく表示する</textarea>
+# 実行後、ページが先頭6人分の確率を見やすく表示する</textarea>
           <div class="r-cell__actions"><button class="button run-button" type="button" disabled>STEP 2を実行</button><button class="button button--quiet restore-button" type="button">元のコードに戻す</button></div>
           <div class="r-output" hidden><div class="r-output__label">challenge先頭6人の確率</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
         </div>
         <div class="code-argument-guide"><article><code>model</code><p>STEP 1でtrainから学んだ係数一式</p></article><article><code>newdata = challenge</code><p>その係数を使う270人の表</p></article><article><code>probability &lt;-</code><p>270個の確率を行順のまま保存</p></article></div>
+        <div class="vector-explainer"><h3><code>probability</code>は、270個の確率を順番に並べたvector</h3><div><span>challengeの行</span><code>1　　2　　3　　4　　5　　6　…</code><span>確率vector</span><code>0.489　0.509　0.851　0.509　0.290　0.290　…</code></div><p><code>predict()</code>が同じmodelを全行へ適用するため、一人ずつ計算式を書き直す必要はありません。<code>type = "response"</code>は、点数<var>z</var>ではなく0から1の確率を返す指定です。</p></div>
         <div class="probability-examples"><article><span>challenge 1行目</span><strong>2等・male</strong><p><var>z</var> ≈ −0.04 → 確率 <b>0.489</b></p></article><article><span>challenge 3行目</span><strong>1等・female</strong><p><var>z</var> ≈ 1.74 → 確率 <b>0.851</b></p></article></div>
         <div class="takeaway"><strong>0.851は「正解が1」そのものではありません</strong><span>modelが「この特徴の人は約85.1%」と見積もった確率です。提出には、次のSTEPで確率を0か1へ変えます。</span></div>
       </div>
@@ -292,19 +381,22 @@ probability &lt;- predict(
       <div class="lesson__number">03</div>
       <div class="lesson__body">
         <h2 id="c03-title">境界以上を1、境界未満を0にする</h2>
-        <p><code>probability</code>には270個の確率が行順に並んでいます。<code>ifelse()</code>は同じ判断を270個へまとめて行い、同じ順番で0/1を返します。</p>
+        <p><code>probability</code>には270個の確率が行順に並んでいます。<code>probability &gt;= 0.5</code>は270個を一度に比較し、それぞれについて「以上」なら<code>TRUE</code>、未満なら<code>FALSE</code>を返します。<code>ifelse()</code>はTRUEを1、FALSEを0へ置き換え、同じ順番のvectorを作ります。</p>
+        <div class="step-brief"><article><span>すること</span><strong>STEP 3を実行</strong></article><article><span>見る場所</span><strong>先頭6人と0/1人数</strong></article><article><span>終わりの印</span><strong>提出ボタンが押せる</strong></article></div>
         <div class="vector-demo vector-demo--stack"><code>0.489　0.509　0.851　…</code><span><code>&gt;= 0.5</code></span><code>FALSE　TRUE　TRUE　…</code><span><code>ifelse()</code></span><code>0　1　1　…</code></div>
+        <div class="logic-reading"><article><code>&gt;=</code><strong>以上</strong><p>左の値が右の境界以上かを一つずつ判定</p></article><article><code>TRUE / FALSE</code><strong>論理値</strong><p>条件が成り立つ／成り立たないというRの答え</p></article><article><code>ifelse(条件, 1, 0)</code><strong>二つへ振り分ける</strong><p>TRUEなら1、FALSEなら0を返す</p></article></div>
         <div class="r-cell r-cell--decision" data-cell-id="03">
           <div class="r-cell__head"><span>一本のスクリプト：区画3</span><span>作るobject：prediction</span></div>
           <textarea aria-label="STEP 3のRコード" spellcheck="false"># >= の右に書いた数字を境界として、一人ずつ判定する
 # ifelse(条件, TRUEのとき, FALSEのとき)
 prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
 
-# 実行後、ページが先頭6人分を見やすく表示する</textarea>
+# 実行後、ページが先頭6人と全270人の0/1人数を表示する</textarea>
           <div class="r-cell__actions"><button class="button run-button" type="button" disabled>STEP 3を実行して答案を作る</button><button class="button button--quiet restore-button" type="button">元のコードに戻す</button></div>
-          <div class="r-output" hidden><div class="r-output__label">challenge先頭6人の0/1</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+          <div class="r-output" hidden><div class="r-output__label">challenge先頭6人の0/1と、270人全体の人数</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
         </div>
         <div class="warning-card"><strong>コード中の数字が、確率と0/1を分ける境界です</strong><span>1回目は0.5、2回目は0.6を使います。確率0.489の人を「必ず非生存」と言っているのではありません。提出形式が0/1なので、境界を決めて分類します。</span></div>
+        <div class="takeaway"><strong>このコードでは、一人ずつ書く繰り返し処理は必要ありません</strong><span>Rはvectorの270個へ同じ比較をまとめて行います。そのため、一人ずつ順番に処理を書く<code>for</code> loopを使わなくても、270個の0/1が一度に作られます。</span></div>
       </div>
     </section>
 
@@ -323,14 +415,16 @@ prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
       <ol class="rerun-instructions">
         <li><span>1</span><p>最初は<code>0.5</code>のままSTEP 1 → 2 → 3を実行し、提出します。</p></li><li><span>2</span><p><a href="#c03-title">STEP 3へ戻り</a>、コード中の<code>0.5</code>を<code>0.6</code>へ変えます。</p></li><li><span>3</span><p>「0.6以上だけを1にすると、1の人数とAccuracyはどう変わるか」を予想します。</p></li><li><span>4</span><p>STEP 3をもう一度実行します。ページが古い答案を破棄し、新しい答案へ置き換えます。</p></li><li><span>5</span><p>同じニックネームで2回目を提出し、二つの結果を比べます。</p></li>
       </ol>
+      <div class="takeaway"><strong>2回目もページは上から再計算しますが、確率の内容は同じです</strong><span>変更するのはSTEP 3の境界だけです。STEP 1と2のコードは変えないため、再計算後の<code>model</code>と<code>probability</code>は同じ内容になり、<code>prediction</code>だけが変わります。</span></div>
       <div class="explanation"><strong>式そのものを変える場合はSTEP 1から</strong><span>予測に使う列や回帰式を変えたときは、modelも確率も0/1も作り直すため、STEP 1 → 2 → 3の順に再実行します。2回目は境界だけを変え、分類結果への影響を比べます。</span></div>
+      <div class="round-notes" aria-labelledby="round-notes-title"><h3 id="round-notes-title">二つの結果をここへ記録する</h3><p>STEP 3の出力にある「予測1」の人数と、提出後に返るAccuracyを書き留めます。この入力は自分の比較メモで、採点サーバーへは送られません。</p><div class="table-scroll"><table><thead><tr><th>Round</th><th>境界</th><th>予測1の人数</th><th>Accuracy</th><th>気づき</th></tr></thead><tbody><tr><td>1</td><td>0.5</td><td><input aria-label="Round 1の予測1人数" inputmode="numeric" placeholder="人数"></td><td><input aria-label="Round 1のAccuracy" inputmode="decimal" placeholder="0.000"></td><td><input aria-label="Round 1の気づき" placeholder="気づいたこと"></td></tr><tr><td>2</td><td>0.6</td><td><input aria-label="Round 2の予測1人数" inputmode="numeric" placeholder="人数"></td><td><input aria-label="Round 2のAccuracy" inputmode="decimal" placeholder="0.000"></td><td><input aria-label="Round 2の気づき" placeholder="変化を書き留める"></td></tr></tbody></table></div></div>
     </section>
 
     <section class="score-section" id="submit" aria-labelledby="submit-title">
       <div class="content-width">
         <p class="section-label">SUBMIT</p><h2 id="submit-title">現在の270人分の予測を採点する</h2>
         <div class="submission-server-flow"><article><span>ブラウザから送る</span><strong>乗客番号＋0/1</strong><p>コード、model、確率そのものは送りません。</p></article><i aria-hidden="true">→</i><article><span>採点サーバー</span><strong>隠し正解と照合</strong><p>一致した人数を270で割ります。</p></article><i aria-hidden="true">→</i><article><span>保存・公開</span><strong>ニックネームとscore</strong><p>予測CSV自体は保存しません。</p></article></div>
-        <p class="score-lead">公開ランキングには、自分で決めたニックネーム、Round、score、receiptが表示されます。実名、学籍番号、メールアドレスはニックネームに入れないでください。</p>
+        <p class="score-lead">公開ランキングには、自分で決めたニックネーム、Round、score、receiptが表示されます。<strong>Round</strong>は何回目の提出か、<strong>score</strong>はAccuracy、<strong>receipt</strong>は提出結果を区別する受付番号です。実名、学籍番号、メールアドレスはニックネームに入れないでください。</p>
         <form id="score-form" class="score-form">
           <label><span>公開ニックネーム</span><input id="team-name" name="team" maxlength="30" autocomplete="off" placeholder="例：Team Seagull"></label>
           <label><span>授業コード</span><input id="class-code" name="class-code" type="password" maxlength="30" autocomplete="off" placeholder="教員の画面を確認"></label>
@@ -349,15 +443,17 @@ prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
 
     <section class="concept-section content-width" aria-labelledby="repo-title"><p class="section-label">COURSE MATERIALS</p><h2 id="repo-title">公開repoは教材一式の置き場所</h2><p>Web上のコードを編集しても、GitHub上のファイルは変わりません。この回ではrepoから教材を閲覧し、コードの編集内容は<code>.R</code>として自分のPCへ保存します。</p><div class="download-row"><a class="button button--quiet" href="https://github.com/JunGoto01/DSC3010J-lecture03">授業用の公開repoを見る</a><a class="button button--quiet" href="leaderboard.html">みんなの公開ランキング</a></div></section>
 
-    <section class="final-section"><div class="content-width"><p class="section-label">EXIT TICKET</p><h2>乗客表に入っていない、どのような情報が予測に必要だろうか</h2><ol><li>trainからmodelを作り、challengeを予測する順番を説明する</li><li>0.5から0.6へ変えると、予測1の人数がどう変わったかを書く</li><li>Accuracyだけでは分からないことを一つ挙げる</li></ol><p class="final-message">回帰は、表に入っている情報から共通規則を作ります。表にない仕組みは、別の情報を集めて初めて分析できます。</p></div></section>
+    <section class="final-section" aria-labelledby="reflection-title"><div class="content-width"><p class="section-label">RECAP &amp; EXIT TICKET</p><h2 id="reflection-title">乗客表に入っていない、どのような情報が予測に必要だろうか</h2><div class="recap-flow" aria-label="今日つないだ分析の流れ"><article><span>1</span><strong>train</strong><p>正解からmodelを学ぶ</p></article><i aria-hidden="true">→</i><article><span>2</span><strong>challenge</strong><p>同じmodelで確率を出す</p></article><i aria-hidden="true">→</i><article><span>3</span><strong>境界</strong><p>確率を0/1へ変える</p></article><i aria-hidden="true">→</i><article><span>4</span><strong>Accuracy</strong><p>隠し正解との一致を測る</p></article></div><div class="accuracy-reality"><strong>高いAccuracyは、現実の仕組みを理解したことと同じではありません</strong><p>今回のmodelが見ているのは、表に入れた客室等級と性別だけです。同じ二列を持つ人でも結果が異なるなら、今回の表に記録していない違いはmodelから見えません。何が抜けている可能性があるかを考えてください。</p></div><div class="completion-check"><strong>最初の学習目標へ戻る</strong><ul><li>trainとchallengeを分ける理由を、自分の言葉で説明できる</li><li>確率、提出用0/1、Accuracyを別の数字として説明できる</li><li><code>model → probability → prediction</code>の順番を説明できる</li></ul></div><ol><li>trainからmodelを作り、challengeを予測する順番を説明する</li><li>0.5から0.6へ変えると、予測1の人数がどう変わったかを書く</li><li>Accuracyだけでは分からないことを一つ挙げる</li></ol><p class="final-message">回帰は、表に入っている情報から共通規則を作ります。表にない仕組みは、別の情報を集めて初めて分析できます。今後の講義では、その情報をどう分析へ加えるか考えます。</p></div></section>
   </main>
+
+  <a class="back-to-map" href="#navigator-title">章一覧へ戻る ↑</a>
 
   <footer><div class="content-width"><span>後藤 潤 · GRIPS</span><span>DSC3010J · 第3回</span></div></footer>
   <script type="text/plain" id="global-setup"></script>
   <script src="competition-data.js?v=20260827-guided2"></script>
   <script src="api-config.js?v=20260827-guided2"></script>
   <script src="competition-api.js?v=20260827-guided2"></script>
-  <script src="app.js?v=20260827-guided2"></script>
+  <script src="app.js?v=20260828-selfcontained1"></script>
   <script src="scoring.js?v=20260827-guided2"></script>
 </body>
 </html>
