@@ -41,7 +41,7 @@ async function scoreSubmission(event) {
     return;
   }
   if (!generatedCsv) {
-    showScoreError("先にSTEP 1、STEP 2、STEP 3を順番に実行すること。STEP 3が終わると、提出用の答案が自動で作られる。");
+    showScoreError("先にSTEP 0からSTEP 3までを順番に実行すること。STEP 3が終わると、提出用の答案が自動で作られる。");
     return;
   }
 

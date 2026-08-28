@@ -137,7 +137,7 @@ async function runCell(cell) {
   textOutput.classList.remove("is-error");
   textOutput.textContent = "Rが計算中…";
   plotOutput.replaceChildren();
-  setRuntimeLoading("コードを実行中", `STEP ${cell.dataset.cellId}までを上から計算中`);
+  setRuntimeLoading("コードを実行中", `STEP ${Number(cell.dataset.cellId)}までを上から計算中`);
 
   let shelter = null;
   try {
@@ -145,16 +145,17 @@ async function runCell(cell) {
 
     for (const previousCell of cells.slice(0, cellIndex)) {
       const previousCode = previousCell.querySelector("textarea").value.trim();
-      if (!previousCode) throw new Error(`STEP ${previousCell.dataset.cellId}のコードが空欄。`);
+      if (!previousCode) throw new Error(`STEP ${Number(previousCell.dataset.cellId)}のコードが空欄。`);
       try {
         await webR.evalRVoid(previousCode);
       } catch (error) {
-        throw new Error(`STEP ${previousCell.dataset.cellId}を再実行できなかった。\n${friendlyError(error)}`);
+        throw new Error(`STEP ${Number(previousCell.dataset.cellId)}を再実行できなかった。\n${friendlyError(error)}`);
       }
     }
 
     shelter = await new webR.Shelter();
     const displayCode = {
+      "00": "invisible(NULL)",
       "01": "round(coef(model), 2)",
       "02": "round(head(probability), 3)",
       "03": `{
@@ -186,7 +187,7 @@ async function runCell(cell) {
       canvas.width = image.width;
       canvas.height = image.height;
       canvas.setAttribute("role", "img");
-      canvas.setAttribute("aria-label", `STEP ${cell.dataset.cellId}でRが描いた図`);
+      canvas.setAttribute("aria-label", `STEP ${Number(cell.dataset.cellId)}でRが描いた図`);
       canvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
       plotOutput.append(canvas);
     }
@@ -214,6 +215,7 @@ async function runCell(cell) {
 
 async function validateRequiredObject(cellId) {
   const checks = {
+    "00": `if (!exists("train") || !exists("challenge")) stop("trainとchallengeが読み込まれていない。ページを再読み込みすること。")`,
     "01": `if (!exists("model") || !inherits(model, "glm")) stop("modelが作られていない。model <- glm(...) の行を確認。")`,
     "02": `if (!exists("probability") || length(probability) != nrow(challenge)) stop("270人分のprobabilityが作られていない。probability <- predict(...) の行を確認。")`,
     "03": `if (!exists("prediction") || length(prediction) != nrow(challenge) || any(!prediction %in% c(0, 1))) stop("270人分の0/1 predictionが作られていない。ifelse(...) の行を確認。")`
@@ -250,11 +252,11 @@ async function installDataFile(url, destination) {
 function downloadCurrentScript() {
   const codeSections = cells.map((cell, index) => {
     const code = cell.querySelector("textarea").value.trim();
-    return `\n\n# STEP ${index + 1} ---------------------------------------------------------------\n${code}`;
+    return `\n\n# STEP ${Number(cell.dataset.cellId)} ---------------------------------------------------------------\n${code}`;
   }).join("");
 
   const script = `# DSC3010J 第3回：ロジスティック回帰pipeline
-# Webページの三つのコード欄を、一本のRスクリプトにまとめた保存版。
+# Webページの四つのコード欄を、一本のRスクリプトにまとめた保存版。
 # インターネット接続があれば、このファイル単体でデータを読み込める。
 
 # ページが自動で行っていたデータ読込
@@ -278,10 +280,12 @@ submission <- data.frame(
 write.csv(submission, "titanic_submission.csv", row.names = FALSE)
 `;
 
-  downloadTextFile(script, "lecture03_logistic_pipeline.R", "text/plain;charset=utf-8");
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace("T", "-").slice(0, 13);
+  const filename = `lecture03_pipeline_${stamp}.R`;
+  downloadTextFile(script, filename, "text/plain;charset=utf-8");
   if (saveScriptStatus) {
-    saveScriptStatus.textContent = "lecture03_logistic_pipeline.R をダウンロードした。";
-    window.setTimeout(() => { saveScriptStatus.textContent = ""; }, 3000);
+    saveScriptStatus.textContent = `${filename} をダウンロードした。提出の記録として残しておくこと。`;
+    window.setTimeout(() => { saveScriptStatus.textContent = ""; }, 5000);
   }
 }
 
@@ -449,7 +453,7 @@ function setRuntimeLoading(title, detail) {
 function setRuntimeReady() {
   statusDot.className = "status-dot status-dot--ready";
   statusTitle.textContent = "Rの準備完了";
-  statusDetail.textContent = "STEP 1から上の順に実行できる";
+  statusDetail.textContent = "STEP 0から上の順に実行できる";
 }
 
 function setRuntimeError(title, detail) {

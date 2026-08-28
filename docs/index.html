@@ -6,7 +6,7 @@
   <meta name="description" content="タイタニックを題材に、データコンペ、回帰、ロジスティック回帰、Rでの予測、提出までを一つのページで学ぶ授業教材">
   <title>第3回｜タイタニックを題材にRでデータコンペ</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230d3159'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='white'%3ER%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260828-lecturevoice1">
+  <link rel="stylesheet" href="styles.css?v=20260828-step0a">
 </head>
 <body>
   <a class="skip-link" href="#main">本文へ移動</a>
@@ -16,7 +16,7 @@
       <p class="eyebrow">応用データサイエンス演習 · DSC3010J · 2026年度 夏学期</p>
       <h1>タイタニックを題材に、Rで予測を提出する</h1>
       <p class="hero__lead">1912年のタイタニック号を題材にした、Kaggleという有名な入門課題がある。今日はそれを授業用の架空データで小さく再現し、Rで予測を作り、提出して採点を受けるところまでをやってみよう。</p>
-      <div class="hero__meta"><span>第3回</span><span>90分</span><span>アカウント登録は不要</span><span>ブラウザでRを実行</span><span>コードは3区画</span><span>提出は2回まで</span></div>
+      <div class="hero__meta"><span>第3回</span><span>90分</span><span>アカウント登録は不要</span><span>ブラウザでRを実行</span><span>コードは4区画</span><span>提出は2回まで</span></div>
     </div>
   </header>
 
@@ -26,7 +26,7 @@
         <span class="status-dot status-dot--loading" id="status-dot" aria-hidden="true"></span>
         <div><strong id="status-title">Rを準備中</strong><span id="status-detail">データを読み込み中</span></div>
       </div>
-      <div class="runtime-actions"><span class="runtime-progress-label">R実行 <b id="runtime-completed-count">0 / 3</b></span><a class="runtime-map-link" href="#navigator-title">章一覧</a><button class="button button--quiet" id="restart-button" type="button">最初の状態に戻す</button></div>
+      <div class="runtime-actions"><span class="runtime-progress-label">R実行 <b id="runtime-completed-count">0 / 4</b></span><a class="runtime-map-link" href="#navigator-title">章一覧</a><button class="button button--quiet" id="restart-button" type="button">最初の状態に戻す</button></div>
     </div>
     <div class="runtime-bar__progress" aria-hidden="true"><i id="bar-progress-fill"></i></div>
   </div>
@@ -43,7 +43,7 @@
         <li><a href="#data-first-title"><span>02</span><strong>表を読む</strong><small>trainとchallenge</small></a></li>
         <li><a href="#workspace-title"><span>03</span><strong>画面を知る</strong><small>Rの記号と保存先</small></a></li>
         <li><a href="#model-primer-title"><span>04</span><strong>規則を理解</strong><small>回帰と確率</small></a></li>
-        <li><a href="#c01-title"><span>05</span><strong>Rを実行</strong><small>三つのコード区画</small></a></li>
+        <li><a href="#c01-title"><span>05</span><strong>Rを実行</strong><small>四つのコード区画</small></a></li>
         <li><a href="#levers-title"><span>06</span><strong>スコアを動かす</strong><small>調節場所とサイクル</small></a></li>
         <li><a href="#submit-title"><span>07</span><strong>予測を提出</strong><small>Accuracyとランキング</small></a></li>
         <li><a href="#reflection-title"><span>08</span><strong>結果を考える</strong><small>表にない情報</small></a></li>
@@ -65,13 +65,14 @@
       <ol class="class-route">
         <li><time>0–12分</time><strong>タイタニックとデータコンペ</strong><span>題材と、「予測して提出する」という遊び方を知る</span></li>
         <li><time>12–24分</time><strong>二つの表と予測問題</strong><span>なぜtrainとchallengeに分けるのかを、実際の行を見ながら確かめる</span></li>
-        <li><time>24–33分</time><strong>画面とRの作業スペース</strong><span>三つのコード欄と、名前を付けて保存する仕組みを確認</span></li>
-        <li><time>33–54分</time><strong>回帰とロジスティック回帰</strong><span>割合の表→直線→S字の順に、図で理解する</span></li>
-        <li><time>54–61分</time><strong>STEP 1</strong><span>trainから予測規則を作る</span></li>
-        <li><time>61–67分</time><strong>STEP 2</strong><span>challengeの確率を出す</span></li>
-        <li><time>67–73分</time><strong>STEP 3</strong><span>確率を0/1へ変え、答案を自動作成</span></li>
-        <li><time>73–78分</time><strong>スコアの動かし方</strong><span>どこを変えるとスコアが動くのか、分析のサイクルを知る</span></li>
-        <li><time>78–88分</time><strong>2回の提出</strong><span>最初の結果と、境界を変えた結果を比較</span></li>
+        <li><time>24–31分</time><strong>画面とRの作業スペース</strong><span>四つのコード欄と、名前を付けて保存する仕組みを確認</span></li>
+        <li><time>31–38分</time><strong>STEP 0</strong><span>行数・列名・欠損・人数表で、データの全体像をつかむ</span></li>
+        <li><time>38–55分</time><strong>回帰とロジスティック回帰</strong><span>割合の表→直線→S字の順に、図で理解する</span></li>
+        <li><time>55–61分</time><strong>STEP 1</strong><span>trainから予測規則を作る</span></li>
+        <li><time>61–66分</time><strong>STEP 2</strong><span>challengeの確率を出す</span></li>
+        <li><time>66–71分</time><strong>STEP 3</strong><span>確率を0/1へ変え、答案を自動作成</span></li>
+        <li><time>71–76分</time><strong>スコアの動かし方</strong><span>どこを変えるとスコアが動くのか、分析のサイクルを知る</span></li>
+        <li><time>76–88分</time><strong>2回の提出</strong><span>提出ごとにコードを保存し、境界を変えた結果と比較</span></li>
         <li><time>88–90分</time><strong>振り返り</strong><span>表にない情報について考える</span></li>
       </ol>
     </section>
@@ -103,10 +104,10 @@
       <h2 id="competition-title">データコンペティションとは：全員が同じ問題を解き、同じ物差しで採点される</h2>
       <p class="competition-primer__lead">仕組みは単純である。主催者が「何を予測するか」「どのデータを使うか」「どう採点するか」を決めて公開する。参加者はデータを調べて予測の方法を考え、正解を見ないまま答案を提出する。すると、スコアと順位が返ってくる。今日この一周を、教室の中で実際にやってみよう。</p>
       <div class="competition-analogy competition-analogy--plain" aria-label="データコンペティションの四つの段階">
-        <article><span>1　主催者から受け取る</span><strong>問題とデータ</strong><p>答えが分かる例を見て、何を予測するのかをつかむ</p></article><i aria-hidden="true">→</i>
-        <article><span>2　参加者が行う</span><strong>分析と予測</strong><p>データの傾向を調べ、未知の答えを予測する規則を作る</p></article><i aria-hidden="true">→</i>
-        <article><span>3　Webサイトへ送る</span><strong>予測を提出</strong><p>正解を見ないまま、一人ずつの予測答案を送る</p></article><i aria-hidden="true">→</i>
-        <article><span>4　同じ基準で返る</span><strong>スコアと順位</strong><p>隠してある正解と照合した結果が返ってくる</p></article>
+        <article><span>1</span><small>主催者から受け取る</small><strong>問題とデータ</strong><p>答えが分かる例を見て、何を予測するのかをつかむ</p></article><i aria-hidden="true">→</i>
+        <article><span>2</span><small>参加者が行う</small><strong>分析と予測</strong><p>データの傾向を調べ、未知の答えを予測する規則を作る</p></article><i aria-hidden="true">→</i>
+        <article><span>3</span><small>Webサイトへ送る</small><strong>予測を提出</strong><p>正解を見ないまま、一人ずつの予測答案を送る</p></article><i aria-hidden="true">→</i>
+        <article><span>4</span><small>同じ基準で返る</small><strong>スコアと順位</strong><p>隠してある正解と照合した結果が返ってくる</p></article>
       </div>
       <div class="accuracy-explained"><strong>今日はこのページが、Kaggleの役をする</strong><p>KaggleやGitHubのアカウントは要らない。ブラウザの中でRを動かし、できた予測をこのページから提出すると、正解率（Accuracy）という一つの数字と、ニックネームのランキングが返ってくる。Accuracyの正確な意味は、データを見たあとで説明する。</p></div>
     </section>
@@ -161,13 +162,25 @@
       </div>
       <div class="takeaway"><strong>同じ手がかりを持つ人でも、結果は分かれている</strong><span>trainの1〜3行目を見てほしい。三人とも3等・maleだが、結果は1、0、0とばらばらである。つまり、客室等級と性別だけでは個人の結果を完全には決められない。だからこの後の予測も「この人は必ず1」と断定する形ではなく、「この特徴の人は何%くらい生存しやすい」という確率の形を取る。</span></div>
       <details class="knowledge-check"><summary>確認：いま見えているPclassとSexだけで、trainの1〜3行目を別々に予測できるか</summary><p><strong>できない。</strong>三人とも3等・maleなので、この二列だけを使う同じ規則からは同じ確率が出る。それでも結果は1、0、0と異なるため、表に記録されていない違いがある可能性を考える必要がある。</p></details>
-      <div class="minimal-dictionary">
-        <article><code>Pclass</code><strong>客室等級</strong><p>1＝1等、2＝2等、3＝3等。予測に使う。</p></article>
-        <article><code>Sex</code><strong>性別カテゴリー</strong><p><code>female</code>または<code>male</code>。予測に使う。</p></article>
-        <article><code>Survived</code><strong>予測したい結果</strong><p>1＝生存、0＝非生存。trainだけにある。</p></article>
-        <article class="minimal-dictionary__system"><code>PassengerId</code><strong>採点用の乗客番号</strong><p>答案の「問題番号」と同じ役割である。回帰には使わず、ページが提出時に自動で付ける。</p></article>
-      </div>
-      <details class="secondary-columns"><summary>CSVにほかの列があるのはなぜか</summary><p>年齢（<code>Age</code>）や運賃（<code>Fare</code>）、同乗した家族の数など、まだ使っていない列も入っている。今日の回帰では<code>Pclass</code>と<code>Sex</code>の二列だけを使うが、これは説明を一番簡単な形にするためである。次回以降は、残りの列のどれを予測に加えるかを自分で選んでいく。今日は使わない列を気にする必要はない。</p></details>
+      <h3 class="column-list-title">trainに入っている列の一覧</h3>
+      <p>CSVには、上で見た3列以外にも次の列が入っている。今日の回帰で使うのは<code>Pclass</code>と<code>Sex</code>だけだが、どんな列があるかを知っておくことが、後でスコアを改善するときの材料になる。この後のSTEP 0で、自分のRからも確かめる。</p>
+      <div class="table-scroll"><table>
+        <thead><tr><th>列名</th><th>意味</th><th>今日の扱い</th></tr></thead>
+        <tbody>
+          <tr><td><code>PassengerId</code></td><td>乗客番号</td><td>採点の照合に使う。回帰には使わない</td></tr>
+          <tr><td><code>Pclass</code></td><td>客室等級（1＝1等、2＝2等、3＝3等）</td><td><strong>予測に使う</strong></td></tr>
+          <tr><td><code>Sex</code></td><td>性別（female / male）</td><td><strong>予測に使う</strong></td></tr>
+          <tr><td><code>Age</code></td><td>年齢</td><td>候補。ただし欠損（空欄）がある</td></tr>
+          <tr><td><code>SibSp</code></td><td>同乗した兄弟姉妹・配偶者の数</td><td>次回以降の候補</td></tr>
+          <tr><td><code>Parch</code></td><td>同乗した親・子どもの数</td><td>次回以降の候補</td></tr>
+          <tr><td><code>Fare</code></td><td>運賃</td><td>次回以降の候補</td></tr>
+          <tr><td><code>Embarked</code></td><td>乗船した港（C / Q / S）</td><td>次回以降の候補</td></tr>
+          <tr><td><code>Cabin</code></td><td>客室番号</td><td>空欄が多く、今日は扱わない</td></tr>
+          <tr><td><code>LocationCode</code></td><td>船内の場所を表すらしいコード</td><td>この表だけでは意味を読み取れない</td></tr>
+          <tr><td><code>Survived</code></td><td>生存0/1（正解）</td><td>trainだけにある。予測の目標</td></tr>
+        </tbody>
+      </table></div>
+      <div class="takeaway"><strong>使う列を選ぶのも、分析の判断の一つ</strong><span>今日は説明を一番簡単な形にするため、欠損のない<code>Pclass</code>と<code>Sex</code>の二列だけを使う。次回以降は、この一覧の中から予測に加える列を各自が選んでいく。</span></div>
     </section>
 
     <section class="competition-primer competition-primer--concrete content-width" aria-labelledby="competition-concrete-title">
@@ -175,10 +188,10 @@
       <h2 id="competition-concrete-title">ここまでの整理：trainで規則を作り、challengeで腕試しをする</h2>
       <p class="competition-primer__lead">データを見たところで、今日の流れをもう一度並べておく。この四つの矢印が、これからの90分の骨組みである。</p>
       <div class="competition-analogy competition-analogy--plain" aria-label="trainから採点まで">
-        <article><span>1　答えが見える表</span><strong>train</strong><p>正解付きの630人から規則を作る</p></article><i aria-hidden="true">→</i>
-        <article><span>2　答えを伏せた表</span><strong>challenge</strong><p>正解を見ないまま270人を予測する</p></article><i aria-hidden="true">→</i>
-        <article><span>3　予測答案</span><strong>提出</strong><p>270人分の0/1を採点サーバーへ送る</p></article><i aria-hidden="true">→</i>
-        <article><span>4　採点結果</span><strong>Accuracy</strong><p>隠し正解と一致した人数の割合が返る</p></article>
+        <article><span>1</span><small>答えが見える表</small><strong>train</strong><p>正解付きの630人から規則を作る</p></article><i aria-hidden="true">→</i>
+        <article><span>2</span><small>答えを伏せた表</small><strong>challenge</strong><p>正解を見ないまま270人を予測する</p></article><i aria-hidden="true">→</i>
+        <article><span>3</span><small>予測答案</small><strong>提出</strong><p>270人分の0/1を採点サーバーへ送る</p></article><i aria-hidden="true">→</i>
+        <article><span>4</span><small>採点結果</small><strong>Accuracy</strong><p>隠し正解と一致した人数の割合が返る</p></article>
       </div>
       <div class="accuracy-explained"><strong>Accuracy＝「270人のうち、何人分の0/1を正しく当てたか」の割合</strong><p>たとえば270人中180人分が隠し正解と一致すれば、<code>180 ÷ 270 = 0.667</code>である。全員当たれば1、半分なら0.5である。あとで出てくる「一人ひとりの生存確率」とは別の数字なので、区別しておこう。</p></div>
     </section>
@@ -186,7 +199,7 @@
     <section class="workspace-explainer content-width" aria-labelledby="workspace-title">
       <p class="section-label">HOW THIS PAGE WORKS</p>
       <h2 id="workspace-title">このページのRの動かし方を、先に知っておく</h2>
-      <p class="section-lead">この後、Rのコード欄が三つ出てくる。三つに分かれて見えるが、実際には一本のスクリプトを読みやすく区切っただけで、どの欄もブラウザ内の同じR作業スペースを使う。上の欄で名前を付けて保存したものを、下の欄が受け取って使う——この関係だけ頭に入れておこう。</p>
+      <p class="section-lead">この後、Rのコード欄が四つ出てくる。四つに分かれて見えるが、実際には一本のスクリプトを読みやすく区切っただけで、どの欄もブラウザ内の同じR作業スペースを使う。上の欄で名前を付けて保存したものを、下の欄が受け取って使う——この関係だけ頭に入れておこう。</p>
       <div class="explanation"><strong>objectは、Rのメモリに置いた「名前つきの中身」</strong><span>表、予測規則、270個の確率など、Rで作ったものに名前を付けておくと、後のコードからその名前で呼び出せる。<code>&lt;-</code>は、右側で作った中身を左側の名前で保存する記号である。</span></div>
       <div class="explanation"><strong>実行ボタンを押すと、現在のコードを上からそのSTEPまで再計算する</strong><span>たとえばSTEP 2では、ページがデータを読み直し、区画1で<code>model</code>を作ってから、区画2で<code>probability</code>を作る。上の区画を変更すると下の結果は無効になり、順番に実行し直す。</span></div>
       <div class="r-basics" aria-labelledby="r-basics-title">
@@ -200,10 +213,11 @@
           <article><code>"response"</code><strong>名前と文字</strong><p>Rは大文字・小文字を区別する。引用符は、選択肢の名前を文字として渡す印である。</p></article>
         </div>
       </div>
-      <div class="page-assisted-output"><strong>実行結果は、ページが確認用コードを加えて表示する</strong><p>objectへ保存するコードだけでは、通常は内容が自動表示されない。このページは学習しやすいように、STEP 1では係数、STEP 2では先頭6人の確率、STEP 3では先頭6人の0/1と全270人の内訳を表示する短いコードを実行後に加える。これは画面表示だけを助け、作ったobjectの内容は変えない。</p></div>
+      <div class="page-assisted-output"><strong>実行結果は、ページが確認用コードを加えて表示する</strong><p>objectへ保存するコードだけでは、通常は内容が自動表示されない。このページは学習しやすいように、STEP 0は書いたコードの結果をそのまま表示し、STEP 1では係数、STEP 2では先頭6人の確率、STEP 3では先頭6人の0/1と全270人の内訳を表示する短いコードを実行後に加える。これは画面表示だけを助け、作ったobjectの内容は変えない。</p></div>
       <figure class="workspace-flow" aria-labelledby="workspace-caption">
         <ol>
           <li class="workspace-flow__prepared"><span>ページが準備</span><strong><code>train</code><br><code>challenge</code></strong><small>CSVから読み込んだ二つの表</small></li>
+          <li><span>STEP 0</span><strong>表の確認</strong><small>行数・列名・欠損・人数表</small></li>
           <li><span>STEP 1</span><strong><code>model</code></strong><small>trainから学んだ予測規則</small></li>
           <li><span>STEP 2</span><strong><code>probability</code></strong><small>challenge 270人分の確率</small></li>
           <li><span>STEP 3</span><strong><code>prediction</code></strong><small>提出する270個の0/1</small></li>
@@ -217,21 +231,51 @@
         <article><h3>再読み込みしたら</h3><p>コードの編集とR objectは消え、最初の状態になる。残したいコードは下のボタンで<code>.R</code>ファイルに保存する。</p></article>
       </div>
       <div class="script-save-panel">
-        <div><strong>現在の三つのコード欄を一本にまとめて保存</strong><span>保存先はブラウザのダウンロード先である。Web上の編集がGitHubへ書き込まれることはない。</span></div>
+        <div><strong>現在の四つのコード欄を一本にまとめて保存</strong><span>保存先はブラウザのダウンロード先である。提出のたびに保存しておくと、後から「どのコードで出したか」をたどれる。</span></div>
         <button class="button button--quiet" id="save-script-button" type="button">現在のコードを .R で保存</button>
         <small id="save-script-status" aria-live="polite"></small>
       </div>
       <div class="progress-panel" role="group" aria-label="進み具合">
-        <div class="progress-panel__labels"><span>実行済みのコード区画</span><strong><span id="completed-count">0</span> / <span id="total-count">3</span></strong></div>
+        <div class="progress-panel__labels"><span>実行済みのコード区画</span><strong><span id="completed-count">0</span> / <span id="total-count">4</span></strong></div>
         <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
-      <div class="button-state-note"><strong>実行ボタンが灰色のときは、順番待ち</strong><span>前のSTEPが終わるまで、次のボタンは押せないようにしてある。STEP 1が終わるとSTEP 2が、STEP 2が終わるとSTEP 3が押せるようになる。</span></div>
+      <div class="button-state-note"><strong>実行ボタンが灰色のときは、順番待ち</strong><span>前のSTEPが終わるまで、次のボタンは押せないようにしてある。STEP 0が終わるとSTEP 1が、というように一つ前が終わると次が押せるようになる。</span></div>
+    </section>
+
+    <section class="part-heading" id="part-explore"><div class="content-width"><p>R SCRIPT · STEP 0</p><h2>モデルの前に、データの全体像をつかむ</h2><span>ここから四つのコード欄を上から実行する</span></div></section>
+    <section class="lesson content-width" aria-labelledby="c00-title">
+      <div class="lesson__number">00</div>
+      <div class="lesson__body">
+        <h2 id="c00-title">行数・列名・数値のようす・欠損を、自分のRで確かめる</h2>
+        <p>いきなりモデルを作るのではなく、まず手元のデータに何が入っているかを確かめる。ここで見たものが、後でスコアを改善するときのヒントになる。</p>
+        <div class="step-brief"><article><span>すること</span><strong>STEP 0を実行</strong></article><article><span>見る場所</span><strong>列名・summary・人数表</strong></article><article><span>終わりの印</span><strong>STEP 1が押せる</strong></article></div>
+        <div class="r-cell" data-cell-id="00">
+          <div class="r-cell__head"><span>一本のスクリプト：区画0</span><span>作るobject：なし（確認だけ）</span></div>
+          <textarea aria-label="STEP 0のRコード" spellcheck="false"># 表の大きさ：nrow() は行数（＝人数）を返す
+nrow(train)
+nrow(challenge)
+
+# 列の名前：names() は列名の一覧を返す
+names(train)
+
+# 数値の列のようす：summary() は最小・中央値・平均・最大などを返す
+# NA's は欠損（空欄）の個数
+summary(train[, c("Age", "SibSp", "Parch", "Fare")])
+
+# 人数表：table() はカテゴリーの組み合わせごとに人数を数える
+table(train$Sex, train$Survived)</textarea>
+          <div class="r-cell__actions"><button class="button run-button" type="button" disabled>STEP 0を実行</button><button class="button button--quiet restore-button" type="button">元のコードに戻す</button></div>
+          <div class="r-output" hidden><div class="r-output__label">Rから返るデータの全体像</div><pre class="text-output" aria-live="polite"></pre><div class="plot-output"></div></div>
+        </div>
+        <div class="output-reading" aria-labelledby="step0-output-title"><h3 id="step0-output-title">STEP 0の出力の読み方</h3><p>四つの結果が順に表示される。それぞれ次の点を確かめてほしい。</p><div><article><code>630 / 270</code><strong>行数</strong><span>trainは630人、challengeは270人</span></article><article><code>NA's 53</code><strong>Ageの欠損</strong><span>年齢は53人分が空欄。そのままでは回帰に使いにくい</span></article><article><code>table()</code><strong>人数表</strong><span>femaleとmaleで、1の割合がはっきり違う</span></article></div></div>
+        <div class="takeaway"><strong>この画面が、スコア改善のヒントの出どころになる</strong><span>SibSp・Parch・Fareは欠損がなく、すぐ回帰に足せる候補である。Ageは有力そうだが、53人分の欠損をどう扱うかという問題が付いてくる。summary()やtable()で列のようすを見てから足す列を選ぶ——Round 2や次回以降で、必ずここへ戻ってくることになる。</span></div>
+      </div>
     </section>
 
     <section class="model-primer content-width" aria-labelledby="model-primer-title">
       <p class="section-label">REGRESSION → LOGISTIC REGRESSION</p>
       <h2 id="model-primer-title">回帰とは何か：集団ごとの割合を、一つの規則にまとめる</h2>
-      <p class="model-primer__lead">「回帰で予測する」と聞くと難しそうだが、出発点はただの割合である。まず式の前に、trainを集団ごとに数えた表を一つ見てほしい。</p>
+      <p class="model-primer__lead">「回帰で予測する」と聞くと難しそうだが、出発点はSTEP 0で見た人数表と同じ、ただの割合である。まず式の前に、あの人数表を割合に直し、集団を細かくした表を一つ見てほしい。</p>
       <div class="table-scroll"><table class="model-group-table model-group-table--simple">
         <caption>trainの630人を集団に分けて、生存した割合を数えた表</caption>
         <thead><tr><th>集団</th><th>trainで生存した割合</th></tr></thead>
@@ -324,7 +368,7 @@
       <details class="knowledge-check"><summary>確認：同じ3等・femaleの人を、modelは別々の確率にできるか</summary><p><strong>できない。</strong>今回のmodelが使う手がかりは<code>Pclass</code>と<code>Sex</code>だけなので、二つが同じ人には同じ確率が出る。表に入っていない違いは、このmodelからは見えない。</p></details>
     </section>
 
-    <section class="part-heading" id="part-model"><div class="content-width"><p>R SCRIPT · 1 OF 3</p><h2>trainから規則を作る</h2><span>ここから三つのコード欄を上から実行する</span></div></section>
+    <section class="part-heading" id="part-model"><div class="content-width"><p>R SCRIPT · STEP 1</p><h2>trainから規則を作る</h2><span>STEP 0で見たデータから、予測の規則を学ぶ</span></div></section>
     <section class="lesson content-width" aria-labelledby="c01-title">
       <div class="lesson__number">01</div>
       <div class="lesson__body">
@@ -365,7 +409,7 @@ model &lt;- glm(
       </div>
     </section>
 
-    <section class="part-heading"><div class="content-width"><p>R SCRIPT · 2 OF 3</p><h2>challengeへ同じ規則を使う</h2><span>modelの係数は変えない</span></div></section>
+    <section class="part-heading"><div class="content-width"><p>R SCRIPT · STEP 2</p><h2>challengeへ同じ規則を使う</h2><span>modelの係数は変えない</span></div></section>
     <section class="lesson content-width" aria-labelledby="c02-title">
       <div class="lesson__number">02</div>
       <div class="lesson__body">
@@ -393,7 +437,7 @@ probability &lt;- predict(
       </div>
     </section>
 
-    <section class="part-heading"><div class="content-width"><p>R SCRIPT · 3 OF 3</p><h2>確率を提出用の0/1へ変える</h2><span>変更する場所は境界の数字だけ</span></div></section>
+    <section class="part-heading"><div class="content-width"><p>R SCRIPT · STEP 3</p><h2>確率を提出用の0/1へ変える</h2><span>変更する場所は境界の数字だけ</span></div></section>
     <section class="lesson content-width" aria-labelledby="c03-title">
       <div class="lesson__number">03</div>
       <div class="lesson__body">
@@ -431,17 +475,17 @@ prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
       <h2 id="levers-title">スコアはどこを変えると動くのか</h2>
       <p>提出するとAccuracyが返ってくる。では、その数字を上げたいとき、どこをいじればよいのか。今日の分析で調節できる場所は、次の三つである。</p>
       <div class="workspace-rules">
-        <article><h3>① 予測に使う列（STEP 1のformula）</h3><p><code>Survived ~ Pclass + Sex</code>の右側である。今日は二列に固定するが、次回以降は<code>+ Age</code>や<code>+ Fare</code>のように、CSVにある列を自分で選んで足していく。ここを変えるとmodelから作り直しになるので、STEP 1 → 2 → 3を順に再実行する。なお、列を足せばスコアが必ず上がる、というものではない。それも実験で確かめることの一つである。</p></article>
+        <article><h3>① 予測に使う列（STEP 1のformula）</h3><p><code>Survived ~ Pclass + Sex</code>の右側である。今日は二列に固定するが、次回以降は<code>+ Age</code>や<code>+ Fare</code>のように、CSVにある列を自分で選んで足していく。ここを変えるとmodelから作り直しになるので、STEP 1 → 2 → 3を順に再実行する。どの列を足すかのヒントは、STEP 0のsummary()と人数表にある。なお、列を足せばスコアが必ず上がる、というものではない。それも実験で確かめることの一つである。</p></article>
         <article><h3>② 確率を0/1へ変える境界（STEP 3の数字）</h3><p><code>0.5</code>と書いた境界である。ここを上げ下げすると、確率は一切変わらないまま、提出する0/1だけが変わる。変えるのがSTEP 3だけなら、再実行もSTEP 3だけで済む。今日の2回目の提出では、これを動かす。</p></article>
         <article><h3>③ 表に入っていない情報</h3><p>同じ等級・性別なのに結果が違う人たちがいた。その違いを説明する情報は、今の表の外にある。新しい情報を集めて表へ加えることも、スコアを動かす大きな手段である。これは最後の章と、この後の講義であらためて考える。</p></article>
       </div>
       <div class="explanation"><strong>共通のルール：上流を変えたら、そこから下流を流し直す</strong><span>三つのSTEPは「model → probability → prediction」と一列につながった、川の流れのようなものである。上流のSTEPを変えたら、そこから下のSTEPをすべて作り直す。formulaを変えたらSTEP 1から、境界を変えたらSTEP 3だけ。このページも同じルールで、上流を編集すると下流の結果を自動的に無効にする。</span></div>
       <p>そして、実際のデータ分析はこの「変えて、流し直して、また採点する」を何度も回す。この一周を<strong>分析のサイクル</strong>と呼ぶことにする。</p>
       <div class="competition-analogy competition-analogy--plain" aria-label="分析のサイクル">
-        <article><span>1　考える</span><strong>仮説を立てる</strong><p>「境界を0.6にしたら上がるはずだ」のように、変える場所と理由を決める</p></article><i aria-hidden="true">→</i>
-        <article><span>2　変える</span><strong>コードを直して再実行</strong><p>変更した場所から下のSTEPを流し直す</p></article><i aria-hidden="true">→</i>
-        <article><span>3　試す</span><strong>提出して採点</strong><p>新しい予測を採点サーバーへ送る</p></article><i aria-hidden="true">→</i>
-        <article><span>4　振り返る</span><strong>前回と比べ、次の仮説へ</strong><p>スコアの差を読み、1へ戻る</p></article>
+        <article><span>1</span><small>考える</small><strong>仮説を立てる</strong><p>「境界を0.6にしたら上がるはずだ」のように、変える場所と理由を決める</p></article><i aria-hidden="true">→</i>
+        <article><span>2</span><small>変える</small><strong>コードを直して再実行</strong><p>変更した場所から下のSTEPを流し直す</p></article><i aria-hidden="true">→</i>
+        <article><span>3</span><small>試す</small><strong>提出して採点</strong><p>新しい予測を採点サーバーへ送る</p></article><i aria-hidden="true">→</i>
+        <article><span>4</span><small>振り返る</small><strong>前回と比べ、次の仮説へ</strong><p>保存したコードと記録を見比べ、1へ戻る</p></article>
       </div>
       <div class="takeaway"><strong>Kaggleの参加者は、この一周を何十回も回している</strong><span>一回の提出で終わりではなく、結果を見ては仮説を立て直し、少しずつスコアを詰めていく。今日はRound 1 → Round 2の2回の提出で、このサイクルをちょうど一周だけ体験する。</span></div>
     </section>
@@ -450,20 +494,21 @@ prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
       <p class="section-label">SECOND TRY</p>
       <h2 id="round2-title">2回目の提出：サイクルを一周する。変えるのはSTEP 3の境界だけ</h2>
       <p>前の章で見た三つの調節場所のうち、今日は②の境界を動かす。手順は次のとおり。</p>
+      <div class="warning-card"><strong>提出の履歴は、自分で残さない限りどこにも残らない</strong><span>ランキングに残るのはニックネーム、Round、スコアだけで、どのコードで出したかはサーバーに保存されない。提出のたびに「現在のコードを .R で保存」ボタンでそのときのコードを保存し、何を変えて何を試したかを記録しながら進めること。記録がないと、スコアが動いた理由を後からたどれなくなる。</span></div>
       <ol class="rerun-instructions">
-        <li><span>1</span><p>最初は<code>0.5</code>のままSTEP 1 → 2 → 3を実行し、提出する（Round 1）。</p></li><li><span>2</span><p><a href="#c03-title">STEP 3へ戻り</a>、コード中の<code>0.5</code>を<code>0.6</code>へ変える。</p></li><li><span>3</span><p>実行する前に、「0.6以上だけを1にすると、1の人数とAccuracyはどうなるか」を自分なりに予想する。</p></li><li><span>4</span><p>STEP 3をもう一度実行する。ページが古い答案を破棄し、新しい答案へ置き換える。</p></li><li><span>5</span><p>同じニックネームで2回目を提出し（Round 2）、二つの結果を比べる。</p></li>
+        <li><span>1</span><p>最初は<code>0.5</code>のままSTEP 0 → 1 → 2 → 3を実行し、提出する（Round 1）。</p></li><li><span>2</span><p>提出したら「現在のコードを .R で保存」を押し、Round 1のコードを保存する。ファイル名とスコアを下の記録表に書く。</p></li><li><span>3</span><p><a href="#c03-title">STEP 3へ戻り</a>、コード中の<code>0.5</code>を<code>0.6</code>へ変える。</p></li><li><span>4</span><p>実行する前に、「0.6以上だけを1にすると、1の人数とAccuracyはどうなるか」を自分なりに予想する。</p></li><li><span>5</span><p>STEP 3をもう一度実行する。ページが古い答案を破棄し、新しい答案へ置き換える。</p></li><li><span>6</span><p>同じニックネームで2回目を提出し（Round 2）、Round 2のコードも保存してから二つの結果を比べる。</p></li>
       </ol>
       <div class="explanation"><strong>なぜ、一度に一箇所しか変えないのか</strong><span>二箇所を同時に変えてスコアが動くと、どちらの変更が効いたのか分からなくなるからである。一箇所だけ変えれば、スコアの差はその変更のせいだと言える。これは理科の実験で条件を一つずつ変えるのと同じ考え方で、分析のサイクルを回すときの基本の作法である。</span></div>
       <div class="explanation"><strong>なぜ境界を0.6にするのか</strong><span>STEP 2の確率を思い出してほしい。2等のmaleが約0.489、3等のfemaleが約0.509と、多くの乗客の確率が0.5のすぐ近くに集まっていた。境界を0.5から0.6へ動かすと、この「際どい人たち」の0/1がまとめて入れ替わる。つまり、小さな変更でも提出内容が大きく変わる、面白い場所である。</span></div>
       <div class="takeaway"><strong>2回目も再計算は上から走るが、確率は同じ値になる</strong><span>STEP 1と2のコードは変えていないので、作り直した<code>model</code>と<code>probability</code>は1回目と同じ内容である。変わるのは<code>prediction</code>だけ。「確率は同じでも、境界しだいで提出する0/1は変わる」ことを、自分の提出で確かめよう。</span></div>
-      <div class="round-notes" aria-labelledby="round-notes-title"><h3 id="round-notes-title">二つの結果をここへ記録する</h3><p>STEP 3の出力にある「予測1」の人数と、提出後に返るAccuracyを書き留める。この入力は自分の比較メモで、採点サーバーへは送られない。</p><div class="table-scroll"><table><thead><tr><th>Round</th><th>境界</th><th>予測1の人数</th><th>Accuracy</th><th>気づき</th></tr></thead><tbody><tr><td>1</td><td>0.5</td><td><input aria-label="Round 1の予測1人数" inputmode="numeric" placeholder="人数"></td><td><input aria-label="Round 1のAccuracy" inputmode="decimal" placeholder="0.000"></td><td><input aria-label="Round 1の気づき" placeholder="気づいたこと"></td></tr><tr><td>2</td><td>0.6</td><td><input aria-label="Round 2の予測1人数" inputmode="numeric" placeholder="人数"></td><td><input aria-label="Round 2のAccuracy" inputmode="decimal" placeholder="0.000"></td><td><input aria-label="Round 2の気づき" placeholder="変化を書き留める"></td></tr></tbody></table></div></div>
+      <div class="round-notes" aria-labelledby="round-notes-title"><h3 id="round-notes-title">二つの結果をここへ記録する</h3><p>STEP 3の出力にある「予測1」の人数と、提出後に返るAccuracy、保存した.Rのファイル名を書き留める。この入力は自分の比較メモで、採点サーバーへは送られない。</p><div class="table-scroll"><table><thead><tr><th>Round</th><th>境界</th><th>予測1の人数</th><th>Accuracy</th><th>保存した.Rファイル</th><th>気づき</th></tr></thead><tbody><tr><td>1</td><td>0.5</td><td><input aria-label="Round 1の予測1人数" inputmode="numeric" placeholder="人数"></td><td><input aria-label="Round 1のAccuracy" inputmode="decimal" placeholder="0.000"></td><td><input aria-label="Round 1で保存したファイル名" placeholder="ファイル名"></td><td><input aria-label="Round 1の気づき" placeholder="気づいたこと"></td></tr><tr><td>2</td><td>0.6</td><td><input aria-label="Round 2の予測1人数" inputmode="numeric" placeholder="人数"></td><td><input aria-label="Round 2のAccuracy" inputmode="decimal" placeholder="0.000"></td><td><input aria-label="Round 2で保存したファイル名" placeholder="ファイル名"></td><td><input aria-label="Round 2の気づき" placeholder="変化を書き留める"></td></tr></tbody></table></div></div>
     </section>
 
     <section class="score-section" id="submit" aria-labelledby="submit-title">
       <div class="content-width">
         <p class="section-label">SUBMIT</p><h2 id="submit-title">現在の270人分の予測を採点する</h2>
         <div class="submission-server-flow"><article><span>ブラウザから送る</span><strong>乗客番号＋0/1</strong><p>コード、model、確率そのものは送らない。</p></article><i aria-hidden="true">→</i><article><span>採点サーバー</span><strong>隠し正解と照合</strong><p>一致した人数を270で割る。</p></article><i aria-hidden="true">→</i><article><span>保存・公開</span><strong>ニックネームとscore</strong><p>予測CSV自体は保存しない。</p></article></div>
-        <p class="score-lead">公開ランキングには、自分で決めたニックネーム、Round、score、receiptが表示される。<strong>Round</strong>は何回目の提出か、<strong>score</strong>はAccuracy、<strong>receipt</strong>は提出結果を区別する受付番号である。実名、学籍番号、メールアドレスはニックネームに入れないこと。</p>
+        <p class="score-lead">公開ランキングには、自分で決めたニックネーム、Round、score、receiptが表示される。<strong>Round</strong>は何回目の提出か、<strong>score</strong>はAccuracy、<strong>receipt</strong>は提出結果を区別する受付番号である。実名、学籍番号、メールアドレスはニックネームに入れないこと。また、提出したコードはサーバーに残らないため、どのコードで出したかは自分の.R保存だけが頼りである。</p>
         <form id="score-form" class="score-form">
           <label><span>公開ニックネーム</span><input id="team-name" name="team" maxlength="30" autocomplete="off" placeholder="例：Team Seagull"></label>
           <label><span>授業コード</span><input id="class-code" name="class-code" type="password" maxlength="30" autocomplete="off" placeholder="教員の画面を確認"></label>
@@ -492,7 +537,7 @@ prediction &lt;- ifelse(probability &gt;= 0.5, 1, 0)
   <script src="competition-data.js?v=20260827-guided2"></script>
   <script src="api-config.js?v=20260827-guided2"></script>
   <script src="competition-api.js?v=20260828-plain1"></script>
-  <script src="app.js?v=20260828-plain1"></script>
-  <script src="scoring.js?v=20260828-plain1"></script>
+  <script src="app.js?v=20260828-step0a"></script>
+  <script src="scoring.js?v=20260828-step0a"></script>
 </body>
 </html>
